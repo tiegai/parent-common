@@ -1,0 +1,17 @@
+repositories {
+    maven {
+        credentials {
+            username System.getenv('SA_U')
+            password System.getenv('SA_P')
+        }
+        url 'https://artifactory.nike.com/artifactory/all-repos'
+    }
+}
+
+dependencies {
+    classpath 'com.nike.blueprint:blueprint-plugin:3.+'
+    classpath 'com.nike.gradle-continuousdelivery-plugin:gradle-continuousdelivery-plugin:2.+'
+    classpath 'com.nike.qm:gradle-reportarchiver-plugin:1+'
+    classpath 'com.nike.gradle-cd-service-apis-plugin:gradle-cd-service-apis-plugin:1+'
+    classpath 'com.nike.gradle-sts-plugin:gradle-sts-plugin:0.0.8+'
+}

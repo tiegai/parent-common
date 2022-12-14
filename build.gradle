@@ -1,0 +1,149 @@
+group = groupId
+
+buildscript {
+    ext {
+        piTestCommandLineVersion = '1.1.11'
+        piTestGradlePluginVersion = '1.1.11'
+        guavaVersion = '31.1-jre'
+        spotBugsPluginVersion = '2.0.0'
+        springBootPluginVersion = '2.7.3'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("info.solidsoft.gradle.pitest:gradle-pitest-plugin:${piTestGradlePluginVersion}")
+        classpath("org.pitest:pitest-command-line:${piTestCommandLineVersion}")
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:${spotBugsPluginVersion}"
+        classpath "com.google.guava:guava:${guavaVersion}"
+    }
+    apply from: file('gradle/buildscript.gradle'), to: buildscript
+}
+
+ext {
+    // project dependency versions
+    spindleVersion = '7.0.1.54'
+    springBeansVersion = '5.3.22'
+    tracingCoreVersion = '1.0.11'
+    nikeInternalUtilVersion = '0.9.0.1'
+    lombokVersion = '1.18.24'
+    wingtipsInternalVersion = '9.2.0.21'
+    wingtipsVersion = '0.23.1'
+    cerberusVersion = '3.2.2'
+    cerberusArchaiusVersion = '7.1.0'
+    backstopperInternalVersion = '5.0.0.35'
+    backstopperVersion = '0.12.0'
+
+    // test dependency versions
+    junitVersion = '4.12'
+    assertjVersion = '3.8.0'
+    mockitoVersion = '2.22.0'
+    restAssuredVersion = '3.0.3'
+    junitQuickCheckVersion = '1.0'
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+apply from: file('gradle/check.gradle')
+apply from: file('gradle/release.gradle')
+apply from: file('gradle/sources.gradle')
+
+eclipse {
+    classpath {
+        downloadJavadoc = true
+        downloadSources = false
+    }
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = false
+    }
+}
+
+compileJava {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.fork = true
+}
+
+compileTestJava {
+    options.compilerArgs << '-Xlint:deprecation'
+    options.fork = true
+}
+
+configurations {
+    compile.exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    compile.exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+}
+
+jar {
+    dependsOn versionInfo
+    baseName = artifactId
+    version = releaseVersion
+
+    exclude('application.yaml')
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    // Use -PuseMavenLocal=true to enable
+    if (project.hasProperty("useMavenLocal")) {
+        // DO NOT put mavenLocal() in the general area as an always-available option.
+        // It will sometimes fail your builds with bizarre errors.
+        mavenLocal()
+    }
+    
+    mavenCentral()
+    maven {
+        credentials {
+            username System.getenv('SA_U') //fetched from environment
+            password System.getenv('SA_P') //fetched from environment
+        }
+        url 'https://artifactory.nike.com/artifactory/all-repos'
+    }
+}
+
+// Log4j 2 vulnerability
+ext['log4j2.version'] = '2.17.1'
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-data-mongodb:2.7.6")
+    compile("org.springframework:spring-beans:${springBeansVersion}")
+    compile("org.springframework:spring-context:${springBeansVersion}")
+    compile("org.springframework:spring-web:${springBeansVersion}")
+    compile("org.springframework:spring-webmvc:${springBeansVersion}")
+    compile("org.springframework:spring-core:${springBeansVersion}")
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    compile("javax.annotation:javax.annotation-api:1.2")
+    compile("com.fasterxml.jackson.core:jackson-core:2.13.3")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+
+    // Nike dependencies
+    // compile("com.nike.phylon:spindle-core:${spindleVersion}")
+    compile("com.nike.tracing:tracing-core:${tracingCoreVersion}")
+    compile("com.nike.internal:nike-internal-util:${nikeInternalUtilVersion}")
+    compile("com.nike:cerberus-archaius-client:${cerberusArchaiusVersion}") {
+        exclude group: 'com.amazonaws'
+    }
+    compile("com.nike:cerberus-client:7.4.7")
+    compile("com.nike.wingtips:wingtips-internal-spring-cloud-netflix:${wingtipsInternalVersion}")
+    compile("com.nike.wingtips:wingtips-internal-hystrix-spring-boot:${wingtipsInternalVersion}")
+    compile("com.nike.wingtips:wingtips-java8:${wingtipsVersion}")
+    compile("com.nike.wingtips:wingtips-spring-boot:${wingtipsVersion}")
+    compile("com.nike.backstopper:backstopper-spring-boot2-webmvc:${backstopperVersion}")
+    compile("com.nike.backstopper:backstopper-internal-commerce-springboot2-webmvc:${backstopperInternalVersion}")
+
+    // Test dependencies
+    testCompile("junit:junit:${junitVersion}")
+    testCompile("org.mockito:mockito-core:${mockitoVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+}

@@ -1,0 +1,116 @@
+apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
+apply plugin: "com.github.spotbugs"
+
+checkstyle {
+    configFile = rootProject.file('codequality/checkstyle.xml')
+    sourceSets = [ project.sourceSets.main ]
+    checkstyleMain.exclude '**/Application.*/**'
+}
+
+spotbugs {
+    // See https://github.com/spotbugs/spotbugs-gradle-plugin/blob/master/src/main/java/com/github/spotbugs/SpotBugsExtension.java
+
+    toolVersion = '3.1.10' // as of 2018-12-16
+
+    ignoreFailures = false
+
+    // Location of report
+    reportsDir = file(project.projectDir.getAbsolutePath() + '/build/reports/spotbugs')
+
+    // Optional exclusion specification
+    def excludeFile = file('codequality/spotbugsexclude.xml')
+    if (excludeFile.isFile()) {
+        excludeFilter = excludeFile
+    }
+
+    // "max" "increase[s] precision and find[s] more bugs at the expense of running time and memory consumption."
+    effort = "max"
+
+    sourceSets = [project.sourceSets.main]
+}
+
+spotbugsMain {
+    reports {
+        xml.enabled = true
+        xml.withMessages = true  // This is important to generate extra information for spotbugsHtml
+
+        // You can only choose xml or html, but not both :-(  The spotbugsHtml task (below) works around this.
+        html.enabled = false
+    }
+}
+
+spotbugsTest {
+    reports {
+        xml.enabled = true
+        xml.withMessages = true  // This is important to generate extra information for spotbugsHtml
+
+        // You can only choose xml or html, but not both :-(  The spotbugsHtml task (below) works around this.
+        html.enabled = false
+    }
+}
+
+task spotbugsHtml {
+    group = "Verification"
+    description = "Creates a human readable Spotbugs report"
+    doLast {
+        ant.xslt(in: file("$buildDir/reports/spotbugs/main.xml"),
+                style: file('codequality/spotbugs_default.xsl'),
+                out: new File("$buildDir/reports/spotbugs/main.html"))
+    }
+}
+
+spotbugsMain.finalizedBy spotbugsHtml
+
+jacoco {
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+        html.destination file("$buildDir/reports/jacoco")
+    }
+
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [
+                            // inherited from blueprint
+                            '**/server/**',
+                            '**/phylon/**',
+                            '**/Application.*',
+                            '**/model/**',
+                    ])
+        })
+    }
+}
+
+test {
+    jacoco {
+        append = false
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+    finalizedBy jacocoTestReport
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        html.stylesheet = resources.text.fromFile('codequality/checkstyle-noframes-sorted.xsl')
+    }
+}
+
+
+task checkstyleHtml {
+    group = "Verification"
+    description = "Creates a human readable Checkstyle report"
+    doLast {
+        ant.xslt(in: checkstyleMain.reports.xml.destination,
+                style: file('codequality/checkstyle-noframes-sorted.xsl'),
+                out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))
+    }
+}
+checkstyleMain.finalizedBy checkstyleHtml

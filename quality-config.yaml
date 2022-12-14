@@ -1,0 +1,27 @@
+qualityConfig:
+  phases:
+    build:
+      - Checkstyle:
+          metricSource: checkstyle
+          metricFile: build/reports/checkstyle/main.xml
+          reportIndex: build/reports/checkstyle/main.html
+      - Jacoco:
+          metricSource: jacoco
+          metricFile: build/reports/jacoco/test/jacocoTestReport.xml
+          reportFiles:
+            - build/reports/jacoco/**/*
+          reportIndex: build/reports/jacoco/index.html
+      - Junit:
+          metricSource: junit
+          metricFile: build/test-results/test/*.xml
+          reportFiles:
+            - build/reports/test/**/*
+          reportIndex: build/reports/tests/test/index.html
+
+  application:
+    name: ncp-common
+    domain: GC MARTECH
+    classification: Bronze
+    owner: GC MARTECH
+    team: GC-NCP
+    email: Lst-GT.GC-MarTech.GCNCP.Support@nike.com

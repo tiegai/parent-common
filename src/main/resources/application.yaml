@@ -1,0 +1,82 @@
+# Version of the application schema
+version: 1
+
+application:
+  name: ncp-common
+  type: jar
+  qmaProduct: ncp-common
+  description: A library used for shared interactions with ncp services
+  owner: GC MARTECH
+  email: Lst-GT.GC-MarTech.GCNCP.Support@nike.com
+  team: GC-NCP
+  scmProjectKey: GC-NCP
+  scmRepositoryKey: ncp-common
+  classification: Bronze
+  owner:application: maxnotificationcommon
+  owner:domain: GC MARTECH NCP
+
+pipeline:
+  name: gradle-java-jar
+  jenkins:
+    url: https://gcncp.jenkins.bmx.nikecloud.com/
+    folder: CDS V1/ncp-common
+  dslFiles:
+    pra:
+      parameters:
+        useQTPra: true
+        qualityConfig: src/main/resources/application.yaml
+        testCommand: "./gradlew clean check pit"
+    jar:
+      parameters:
+        useQtPlugin: true
+        qualityConfig: src/main/resources/application.yaml
+        jarTask: "build pit"
+        slackNotifyOnSuccess: true
+        slackNotifyOnFailure: true
+    publish:
+      parameters:
+        slackNotifyOnSuccess: true
+        slackNotifyOnFailure: true
+  parameters:
+    slackNotificationsEnabled: true
+
+quality:
+  profiles:
+    default:
+      reports:
+        - format: junit
+          outputLocations:
+          - build/test-results/test/*.xml
+          artifacts:
+          - build/reports/test/**/*
+          mainArchivalFile: build/reports/test/index.html
+        - format: jacoco
+          outputLocations:
+          - build/reports/jacoco/test/jacocoTestReport.xml
+          artifacts:
+          - build/reports/jacoco/**/*
+          mainArchivalFile: build/reports/jacoco/index.html
+        - format: pmd
+          outputLocations:
+          - build/reports/pmd/main.xml
+          artifacts:
+          - build/reports/pmd/*
+          mainArchivalFile: build/reports/pmd/main.html
+        - format: findbugs
+          outputLocations:
+          - build/reports/findbugs/main.xml
+          artifacts:
+          - build/reports/findbugs/*
+          mainArchivalFile: build/reports/findbugs/main.html
+        - format: checkstyle
+          outputLocations:
+          - build/reports/checkstyle/main.xml
+          artifacts:
+          - build/reports/checkstyle/*
+          mainArchivalFile: build/reports/checkstyle/main.html
+        - format: pit
+          outputLocations:
+          - build/reports/pit/mutations.xml
+          artifacts:
+          - build/reports/pit/**/*
+          mainArchivalFile: build/reports/pit/index.html
