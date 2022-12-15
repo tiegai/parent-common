@@ -19,7 +19,7 @@ pipeline:
   name: gradle-java-jar
   jenkins:
     url: https://gcncp.jenkins.bmx.nikecloud.com/
-    folder: CDS V1/ncp-common
+    folder: NCP/ncp-common
   dslFiles:
     pra:
       parameters:

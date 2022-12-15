@@ -4,7 +4,7 @@ Common Library is a collection of bean and service useful within applications bu
 NCP service.
 
 ## Versioning
-maxnotificationcommon uses [Semantic Versioning](http://semver.org) to convey information about changes.  For a detailed list of
+ncp-common uses [Semantic Versioning](http://semver.org) to convey information about changes.  For a detailed list of
 changes in each release, please consult the [Version History](CHANGES.md).
 
 
@@ -20,7 +20,7 @@ $ ./gradlew clean build
 If you just want to include the library in your project, you can add this to your gradle script:
 
 ```
-implementation("com.nike.gc.ncp:ncp-common:1.0.+")
+implementation("com.nike.gc.ncp:ncp-common:1.0.x.x")
 ```
 
 ## Local MongoDb docker
@@ -44,12 +44,6 @@ Include correct properties in your project.
 cerberus.url=http://localhost:5006
 cerberus.region=cn-north-1
 
-# signalfx
-nike.signalfx.registry.enableSilentModeForLocalDev=true
-nike.signalfx.distributed-tracing.output-enabled=false
-nike.signalfx.registry.registerJvmMetrics=false
-nike.signalfx.registry.logMetricNames=false
-
 # jackson timestamp
 spring.jackson.serialization.write-dates-as-timestamps=false
 spring.jackson.date-format=yyyy-MM-dd'T'HH:mm:ss'Z'
@@ -57,6 +51,15 @@ spring.jackson.date-format=yyyy-MM-dd'T'HH:mm:ss'Z'
 # mongo
 mongo.connection.string=mongodb://localhost:27017/ncp
 mongo.db.name=ncp
+```
+
+#Enable mongo repositories scan
+```
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.nike"})
+@EnableMongoRepositories(basePackages = "com.nike.ncp.journeybuilder")
+@Import({WingtipsSpringBootConfiguration.class, CerberusClientSpringBootConfiguration.class})
+public class Application {
 ```
 
 # Exception example

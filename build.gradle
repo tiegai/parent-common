@@ -128,12 +128,17 @@ dependencies {
 
     // Nike dependencies
     // compile("com.nike.phylon:spindle-core:${spindleVersion}")
-    compile("com.nike.tracing:tracing-core:${tracingCoreVersion}")
+    // compile("com.nike.tracing:tracing-core:${tracingCoreVersion}")
     compile("com.nike.internal:nike-internal-util:${nikeInternalUtilVersion}")
     compile("com.nike:cerberus-archaius-client:${cerberusArchaiusVersion}") {
         exclude group: 'com.amazonaws'
     }
+    //Cerberus
     compile("com.nike:cerberus-client:7.4.7")
+    compile("com.nike:cerberus-spring-boot-client:3.2.2")
+    compile("com.nike:cerberus-archaius-client:7.1.0") {
+        exclude group: 'com.amazonaws'
+    }
     compile("com.nike.wingtips:wingtips-internal-spring-cloud-netflix:${wingtipsInternalVersion}")
     compile("com.nike.wingtips:wingtips-internal-hystrix-spring-boot:${wingtipsInternalVersion}")
     compile("com.nike.wingtips:wingtips-java8:${wingtipsVersion}")
