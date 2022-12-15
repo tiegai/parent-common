@@ -20,7 +20,7 @@ $ ./gradlew clean build
 If you just want to include the library in your project, you can add this to your gradle script:
 
 ```
-implementation("com.nike.gc.ncp:ncp-common:1.0.+'")
+implementation("com.nike.gc.ncp:ncp-common:1.0.+")
 ```
 
 ## Local MongoDb docker
