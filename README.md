@@ -32,6 +32,33 @@ Include below block in your docker-compose.yml
       - "27017:27017"
 ```
 
+# Required properties
+Include correct properties in your project.
+
+- application-local.properties
+- application-prod.properties
+- application-test.properties
+
+```
+# cerberus
+cerberus.url=http://localhost:5006
+cerberus.region=cn-north-1
+
+# signalfx
+nike.signalfx.registry.enableSilentModeForLocalDev=true
+nike.signalfx.distributed-tracing.output-enabled=false
+nike.signalfx.registry.registerJvmMetrics=false
+nike.signalfx.registry.logMetricNames=false
+
+# jackson timestamp
+spring.jackson.serialization.write-dates-as-timestamps=false
+spring.jackson.date-format=yyyy-MM-dd'T'HH:mm:ss'Z'
+
+# mongo
+mongo.connection.string=mongodb://localhost:27017/ncp
+mongo.db.name=ncp
+```
+
 # Exception example
 ApiExceptionHandler will throw generic error response automatically.
 ```
