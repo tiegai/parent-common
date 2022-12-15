@@ -125,7 +125,7 @@ dependencies {
     compile("javax.annotation:javax.annotation-api:1.2")
     compile("com.fasterxml.jackson.core:jackson-core:2.13.3")
     compile("com.fasterxml.jackson.core:jackson-databind:2.13.3")
-
+    compile("com.netflix.hystrix:hystrix-core:1.5.18")
     // Nike dependencies
     // compile("com.nike.phylon:spindle-core:${spindleVersion}")
     // compile("com.nike.tracing:tracing-core:${tracingCoreVersion}")
@@ -145,7 +145,6 @@ dependencies {
     compile("com.nike.wingtips:wingtips-spring-boot:${wingtipsVersion}")
     compile("com.nike.backstopper:backstopper-spring-boot2-webmvc:${backstopperVersion}")
     compile("com.nike.backstopper:backstopper-internal-commerce-springboot2-webmvc:${backstopperInternalVersion}")
-
     // Test dependencies
     testCompile("junit:junit:${junitVersion}")
     testCompile("org.mockito:mockito-core:${mockitoVersion}")
