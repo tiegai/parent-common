@@ -10,8 +10,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SmsConfig {
-    public static final String SMS_VENDOR_ZHUJI = "ZHUJI";
-
     private String vendor;
     private String templateId;
     private String cpCode;

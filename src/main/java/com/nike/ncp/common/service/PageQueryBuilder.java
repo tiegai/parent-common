@@ -12,6 +12,8 @@ import java.util.Date;
 @Getter
 public final class PageQueryBuilder {
 
+    public static final String ID = "_id";
+
     private Query query;
     private Query countQuery;
 
@@ -26,7 +28,7 @@ public final class PageQueryBuilder {
 
     public static PageQueryBuilder page(int page, int size) {
         Query countQuery = new Query();
-        countQuery.fields().include("_id");
+        countQuery.fields().include(ID);
         return new PageQueryBuilder(new Query().with(PageRequest.of(page - 1, size)), countQuery);
     }
 

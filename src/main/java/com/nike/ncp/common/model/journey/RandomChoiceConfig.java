@@ -12,9 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RandomChoiceConfig {
-    public static final String RANDOM_TYPE_WEIGHT = "WEIGHT";
-    public static final String RANDOM_TYPE_NUMBER = "NUMBER";
-
     private String randomType;
     private List<RandomBranch> randomBranches;
 }

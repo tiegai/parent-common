@@ -10,11 +10,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WaitConfig {
-    public static final String UNIT_SECOND = "SECOND";
-    public static final String UNIT_MINUTE = "MINUTE";
-    public static final String UNIT_DAY = "DAY";
-    public static final String UNIT_WEEK = "WEEK";
-
     private String unit;
     private int value;
 }
