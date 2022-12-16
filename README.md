@@ -40,10 +40,6 @@ Include correct properties in your project.
 - application-test.properties
 
 ```
-# cerberus
-cerberus.url=http://localhost:5006
-cerberus.region=cn-north-1
-
 # jackson timestamp
 spring.jackson.serialization.write-dates-as-timestamps=false
 spring.jackson.date-format=yyyy-MM-dd'T'HH:mm:ss'Z'
@@ -55,10 +51,10 @@ mongo.db.name=ncp
 
 #Enable mongo repositories scan
 ```
-@SpringBootApplication
+...
 @ComponentScan(basePackages = {"com.nike"})
 @EnableMongoRepositories(basePackages = "com.nike.ncp.journeybuilder")
-@Import({WingtipsSpringBootConfiguration.class, CerberusClientSpringBootConfiguration.class})
+...
 public class Application {
 ```
 
@@ -125,6 +121,11 @@ JourneyList journeyList = JourneyList.builder()
 List all entities
 ```
 List<Journey> list = mongoTemplate.find(PageQueryBuilder.all().getQuery(), Journey.class);
+
+```
+List entities with specified table name
+```
+List<YourEntity> list = mongoTemplate.find(PageQueryBuilder.all().getQuery(), "your_table_name");
 
 ```
 Get an entity

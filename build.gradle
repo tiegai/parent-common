@@ -115,6 +115,10 @@ ext['log4j2.version'] = '2.17.1'
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-mongodb:2.7.6")
+    compile("javax.annotation:javax.annotation-api:1.2")
+    compile("com.fasterxml.jackson.core:jackson-core:2.13.3")
+    compile("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+    compile("org.apache.commons:commons-lang3:3.12.0")
     compile("org.springframework:spring-beans:${springBeansVersion}")
     compile("org.springframework:spring-context:${springBeansVersion}")
     compile("org.springframework:spring-web:${springBeansVersion}")
@@ -122,29 +126,6 @@ dependencies {
     compile("org.springframework:spring-core:${springBeansVersion}")
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-    compile("javax.annotation:javax.annotation-api:1.2")
-    compile("com.fasterxml.jackson.core:jackson-core:2.13.3")
-    compile("com.fasterxml.jackson.core:jackson-databind:2.13.3")
-    compile("com.netflix.hystrix:hystrix-core:1.5.18")
-    // Nike dependencies
-    // compile("com.nike.phylon:spindle-core:${spindleVersion}")
-    // compile("com.nike.tracing:tracing-core:${tracingCoreVersion}")
-    compile("com.nike.internal:nike-internal-util:${nikeInternalUtilVersion}")
-    compile("com.nike:cerberus-archaius-client:${cerberusArchaiusVersion}") {
-        exclude group: 'com.amazonaws'
-    }
-    //Cerberus
-    compile("com.nike:cerberus-client:7.4.7")
-    compile("com.nike:cerberus-spring-boot-client:3.2.2")
-    compile("com.nike:cerberus-archaius-client:7.1.0") {
-        exclude group: 'com.amazonaws'
-    }
-    compile("com.nike.wingtips:wingtips-internal-spring-cloud-netflix:${wingtipsInternalVersion}")
-    compile("com.nike.wingtips:wingtips-internal-hystrix-spring-boot:${wingtipsInternalVersion}")
-    compile("com.nike.wingtips:wingtips-java8:${wingtipsVersion}")
-    compile("com.nike.wingtips:wingtips-spring-boot:${wingtipsVersion}")
-    compile("com.nike.backstopper:backstopper-spring-boot2-webmvc:${backstopperVersion}")
-    compile("com.nike.backstopper:backstopper-internal-commerce-springboot2-webmvc:${backstopperInternalVersion}")
     // Test dependencies
     testCompile("junit:junit:${junitVersion}")
     testCompile("org.mockito:mockito-core:${mockitoVersion}")

@@ -1,11 +1,11 @@
 package com.nike.ncp.common.exception;
 
-import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,7 +16,7 @@ public class ApiException extends RuntimeException {
     private static final long serialVersionUID = 5038988837966289350L;
 
     @Builder.Default
-    private List<ApiErrorMessage> errors = Lists.newArrayList();
+    private List<ApiErrorMessage> errors = new ArrayList<>();
     private HttpStatus status;
 
     public ApiException with(int code, String message) {
