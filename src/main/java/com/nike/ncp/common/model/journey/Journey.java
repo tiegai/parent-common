@@ -19,9 +19,6 @@ public class Journey {
     private int version;
     private String name;
     private String description;
-    private String programId;
-    private String campaignId;
-    private String subCampaignId;
     private String periodicType;
     private Date periodicBegin;
     private Date periodicEnd;
