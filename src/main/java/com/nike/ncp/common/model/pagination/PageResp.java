@@ -6,15 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Collections;
+import java.util.List;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Page {
-    private Long total;
+public class PageResp<T> {
+    private Page page;
+
     @Builder.Default
-    private Integer size = 20;
-    @Builder.Default
-    private Integer current = 1;
-    private Long pages;
+    private List<T> data = Collections.emptyList();
 }

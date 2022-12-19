@@ -45,11 +45,15 @@ spring.jackson.serialization.write-dates-as-timestamps=false
 spring.jackson.date-format=yyyy-MM-dd'T'HH:mm:ss'Z'
 
 # mongo
-mongo.connection.string=mongodb://localhost:27017/ncp
-mongo.db.name=ncp
+spring.data.mongodb.uri=mongodb://localhost:27017/ncp
+```
+####
+Enable mongo ssl connection,If your local environment doesn't need ssl connection, you can turn it off and set it to false.
+```
+spring.data.mongodb.ssl.open = true
 ```
 
-#Enable mongo repositories scan
+#### Enable mongo repositories scan
 ```
 ...
 @ComponentScan(basePackages = {"com.nike"})

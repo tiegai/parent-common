@@ -5,7 +5,7 @@ apply plugin: "com.github.spotbugs"
 checkstyle {
     configFile = rootProject.file('codequality/checkstyle.xml')
     sourceSets = [ project.sourceSets.main ]
-    checkstyleMain.exclude '**/Application.*/**'
+    checkstyleMain.exclude '**/Application.*/**','**/MongoConfiguration.*'
 }
 
 spotbugs {

@@ -1,34 +1,42 @@
 package com.nike.ncp.common.configuration;
 
-import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+import org.springframework.boot.autoconfigure.mongo.MongoPropertiesClientSettingsBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.core.env.Environment;
 
-@Getter
 @Configuration
+@ConditionalOnProperty(prefix = "spring.data.mongodb.ssl", name = "open", havingValue = "true")
 public class MongoConfiguration {
 
-    @Value("${mongo.connection.string}")
-    private String mongoConnectString;
-    @Value("${mongo.db.name}")
-    private String mongoDbName;
+	private final MongoProperties mongoProperties;
 
-    @Bean
-    public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(mongoClient(), getMongoDbName());
-    }
+	public MongoConfiguration(MongoProperties mongoProperties) {
+		super();
+		this.mongoProperties = mongoProperties;
+	}
 
-    @Bean
-    public MongoClient mongoClient() {
-        ConnectionString connectionString = new ConnectionString(getMongoConnectString());
-        return MongoClients.create(MongoClientSettings.builder()
-                .applyConnectionString(connectionString)
-                .build());
-    }
+	@Bean
+
+	public MongoClientSettings mongoClientSettings() {
+		return MongoClientSettings
+					.builder()
+					.applyToSslSettings(builder -> builder.enabled(true).invalidHostNameAllowed(true))
+				    .build();
+	}
+
+
+//	@Bean
+//	public MongoClient mongoClient(){
+//		return MongoClients.create(mongoClientSettings());
+//	}
+
+	@Bean
+	public MongoPropertiesClientSettingsBuilderCustomizer mongoPropertiesCustomizer(MongoProperties properties, Environment environment) {
+		return new MongoPropertiesClientSettingsBuilderCustomizer(properties, environment);
+	}
+
 }
