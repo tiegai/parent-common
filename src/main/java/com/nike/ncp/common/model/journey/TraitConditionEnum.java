@@ -4,7 +4,6 @@ public enum TraitConditionEnum {
 
     JOINER_AND("AND"),
     JOINER_OR("OR"),
-    JOINER_NOT("NOT"),
 
     SOURCE_NAC("NAC"),
     SOURCE_NCP("NCP"),
@@ -17,6 +16,7 @@ public enum TraitConditionEnum {
     SYMBOL_NOT_EXIST("NOT_EXIST"),
 
     SYMBOL_EQUAL("EQUAL"),
+    SYMBOL_NOT_EQUAL("NOT_EQUAL"),
     SYMBOL_GREATER("GREATER"),
     SYMBOL_GREATER_EQUAL("GREATER_EQUAL"),
     SYMBOL_LESS("LESS"),
