@@ -25,6 +25,10 @@ public enum TagConfigEnum {
         this.name = name;
     }
 
+    public String value() {
+        return this.name;
+    }
+
     public String toString() {
         return this.name;
     }
