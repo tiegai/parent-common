@@ -14,22 +14,26 @@ public final class PageQueryBuilder {
 
     public static final String ID = "_id";
 
+    private Integer current;
+    private Integer size;
     private Query query;
     private Query countQuery;
 
-    private PageQueryBuilder(Query query, Query countQuery) {
+    private PageQueryBuilder(Query query, Query countQuery, Integer current, Integer size) {
         this.query = query;
         this.countQuery = countQuery;
+        this.current = current;
+        this.size = size;
     }
 
     public static PageQueryBuilder all() {
-        return new PageQueryBuilder(new Query(), new Query());
+        return new PageQueryBuilder(new Query(), new Query(), null, null);
     }
 
     public static PageQueryBuilder page(int page, int size) {
         Query countQuery = new Query();
         countQuery.fields().include(ID);
-        return new PageQueryBuilder(new Query().with(PageRequest.of(page - 1, size)), countQuery);
+        return new PageQueryBuilder(new Query().with(PageRequest.of(page - 1, size)), countQuery, page, size);
     }
 
     public PageQueryBuilder sort(String sort, String order) {

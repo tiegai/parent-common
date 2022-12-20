@@ -34,7 +34,7 @@ public class PageServiceTest {
     public void findPage() {
         PageQueryBuilder query = mock(PageQueryBuilder.class);
         Page page = mock(Page.class);
-        when(mongoService.findPageByCursor(query,page,any(Class.class))).thenReturn(new PageResp());
+        when(mongoService.findPageByCursor(query,any(String.class),any(Class.class))).thenReturn(new PageResp());
     }
 
 }
