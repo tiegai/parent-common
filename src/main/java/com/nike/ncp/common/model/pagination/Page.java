@@ -17,4 +17,5 @@ public class Page {
     @Builder.Default
     private Integer current = 1;
     private Long pages;
+    private String lastId;
 }

@@ -20,13 +20,13 @@ public class PageServiceTest {
 
     @Mock
     protected MongoTemplate mongoTemplate;
-    private PageService pageService;
+    private MongoService mongoService;
     private PageQueryBuilder query;
 
     @Before
     public void setUp() {
         query = PageQueryBuilder.page(1, 10);
-        pageService = new PageService(mongoTemplate);
+        mongoService = new MongoService(mongoTemplate);
 
     }
 
@@ -34,11 +34,7 @@ public class PageServiceTest {
     public void findPage() {
         PageQueryBuilder query = mock(PageQueryBuilder.class);
         Page page = mock(Page.class);
-        when(pageService.findPage(query,page,any(Class.class))).thenReturn(new PageResp());
+        when(mongoService.findPageByCursor(query,page,any(Class.class))).thenReturn(new PageResp());
     }
 
-    @Test(expected = RuntimeException.class)
-    public void findCountByQuery() {
-        when(pageService.findCountByQuery(query,any(Class.class))).thenReturn(1L);
-    }
 }

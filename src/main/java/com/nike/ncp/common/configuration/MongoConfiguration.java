@@ -6,10 +6,11 @@ import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.autoconfigure.mongo.MongoPropertiesClientSettingsBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@ConditionalOnProperty(prefix = "spring.data.mongodb.ssl", name = "open", havingValue = "true")
+@Profile("!local")
 public class MongoConfiguration {
 
 	private final MongoProperties mongoProperties;
