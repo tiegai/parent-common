@@ -1,1 +1,20 @@
+/**
+ * Centralized plugin repository declaration as an optional replacement of buildscript.repositories{} of build.gradle
+ * https://docs.gradle.org/current/userguide/plugins.html#sec:custom_plugin_repositories
+ */
+pluginManagement {
+	repositories {
+		maven {
+			credentials {
+				username System.getenv('SA_U') //fetched from environment
+				password System.getenv('SA_P') //fetched from environment
+			}
+			url 'https://artifactory.nike.com/artifactory/all-repos'
+		}
+		
+		gradlePluginPortal()
+	}
+}
+
 rootProject.name = artifactId
+include 'model'
