@@ -1,0 +1,11 @@
+plugins {
+	id 'java'
+}
+
+dependencies {
+	// https://stackoverflow.com/a/44914700
+	// https://discuss.gradle.org/t/how-do-i-put-a-root-project-dependency-into-a-sub-project/7484/14
+	implementation rootProject
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+}
