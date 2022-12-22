@@ -1,0 +1,34 @@
+package com.nike.ncp.common.util;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+public final class IsoDateUtil {
+
+    private static final String GMT = "GMT";
+    private static final String ISO_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+    private IsoDateUtil() {
+    }
+
+    public static String fromDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+        sdf.setTimeZone(TimeZone.getTimeZone(GMT));
+        return date == null ? null : sdf.format(date);
+    }
+
+    public static Date toDate(String isoDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat(ISO_DATE_PATTERN, Locale.US);
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        try {
+            return StringUtils.isEmpty(isoDate) ? null : sdf.parse(isoDate);
+        } catch (ParseException e) {
+            throw new RuntimeException("Unable to parse date " + isoDate, e);
+        }
+    }
+}
