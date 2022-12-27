@@ -31,6 +31,7 @@ public abstract class BaseJourneyActivity {
     @NoArgsConstructor
     @RequiredArgsConstructor
     public static class Activity {
+        @NonNull
         private ActivityCategoryEnum category;
     }
 }
