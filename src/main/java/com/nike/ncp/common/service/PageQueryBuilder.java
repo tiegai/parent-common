@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Getter
 public final class PageQueryBuilder {
@@ -27,7 +28,7 @@ public final class PageQueryBuilder {
     }
 
     public static PageQueryBuilder all() {
-        return new PageQueryBuilder(new Query(), new Query(), null, null);
+        return new PageQueryBuilder(new Query(), new Query(), 1, Integer.MAX_VALUE);
     }
 
     public static PageQueryBuilder page(int page, int size) {
@@ -45,8 +46,8 @@ public final class PageQueryBuilder {
         return this;
     }
 
-    public PageQueryBuilder eq(String columnName, String stringValue) {
-        if (StringUtils.isNotBlank(stringValue)) {
+    public PageQueryBuilder eq(String columnName, Object stringValue) {
+        if (Objects.nonNull(stringValue)) {
             Criteria criteria = Criteria.where(columnName).is(stringValue);
             query.addCriteria(criteria);
             countQuery.addCriteria(criteria);
@@ -54,8 +55,8 @@ public final class PageQueryBuilder {
         return this;
     }
 
-    public PageQueryBuilder like(String columnName, String stringValue) {
-        if (StringUtils.isNotBlank(stringValue)) {
+    public PageQueryBuilder like(String columnName, Object stringValue) {
+        if (Objects.nonNull(stringValue)) {
             Criteria criteria = Criteria.where(columnName).regex(".*" + stringValue + ".*", "i");
             query.addCriteria(criteria);
             countQuery.addCriteria(criteria);
