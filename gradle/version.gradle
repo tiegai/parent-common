@@ -1,0 +1,6 @@
+task versionInfo() {
+	def buildNumber = System.getenv("BUILD_NUMBER") ?: 0
+	project.ext.set("releaseVersion", "${project.version}." + buildNumber);
+}
+
+build.dependsOn versionInfo

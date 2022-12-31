@@ -1,8 +1,3 @@
-task versionInfo() {
-    def buildNumber = System.getenv("BUILD_NUMBER") ?: 0
-    project.ext.set("releaseVersion", "${project.version}." + buildNumber);
-}
-
 uploadArchives {
     dependsOn versionInfo
     repositories.mavenDeployer {
@@ -25,7 +20,7 @@ install {
         mavenInstaller {
             pom.groupId = groupId
             pom.artifactId = artifactId
-            pom.version = version
+            pom.version = releaseVersion
         }
     }
 }
