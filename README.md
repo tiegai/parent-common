@@ -15,6 +15,15 @@ The service can be built with the following commands:
 $ ./gradlew clean build
 ```
 
+## Publishing to Maven nexus
+Publish rootProject and all subProjects to local Maven repo to test it out, first
+```sh
+$ ./gradlew clean publishToMavenLocal
+```
+then publish them to the remote Maven nexus
+```sh
+$ ./gradlew clean publish
+```
 
 ## Include the Library in Your Project
 If you just want to include the library in your project, you can add this to your gradle script:
