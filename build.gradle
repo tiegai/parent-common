@@ -17,11 +17,103 @@ buildscript {
     apply from: file('gradle/buildscript.gradle'), to: buildscript
 }
 
-plugins {
-    id 'java'
-    id 'idea'
-    id 'maven'
-    id 'eclipse'
+/**
+ * Centralized declarations using allprojects{}.
+ * No longer have to declare the same configs in each subProject.
+ *
+ * TODO allprojects{} is officially discouraged to use,
+ * https://docs.gradle.org/6.8/userguide/sharing_build_logic_between_subprojects.html#sec:convention_plugins_vs_cross_configuration
+ */
+allprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    
+    apply from: file(rootProject.projectDir.getAbsolutePath() + '/gradle/check.gradle')
+    apply from: file(rootProject.projectDir.getAbsolutePath() + '/gradle/version.gradle')
+    apply from: file(rootProject.projectDir.getAbsolutePath() + '/gradle/sources.gradle')
+    
+    eclipse {
+        classpath {
+            downloadJavadoc = true
+            downloadSources = false
+        }
+    }
+    
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = false
+        }
+    }
+    
+    compileJava {
+        options.compilerArgs << '-Xlint:unchecked'
+        options.fork = true
+    }
+    
+    compileTestJava {
+        options.compilerArgs << '-Xlint:deprecation'
+        options.fork = true
+    }
+    
+    configurations {
+        compile.exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+        compile.exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+    }
+    
+    jar {
+        dependsOn versionInfo
+        baseName = project.name
+        version = releaseVersion
+        
+        exclude('application.yaml')
+    }
+    
+    /**
+     * TODO Replace allprojects.repositories{} with dependencyResolutionManagement{} in settings.gradle, once upgraded to Gradle v6.8 or above.
+     * https://docs.gradle.org/6.8/userguide/declaring_repositories.html#sub:centralized-repository-declaration
+     */
+    repositories {
+        // Use -PuseMavenLocal=true to enable
+        if (project.hasProperty("useMavenLocal")) {
+            // DO NOT put mavenLocal() in the general area as an always-available option.
+            // It will sometimes fail your builds with bizarre errors.
+            mavenLocal()
+        }
+        
+        maven {
+            credentials {
+                username System.getenv('SA_U') //fetched from environment
+                password System.getenv('SA_P') //fetched from environment
+            }
+            url 'https://artifactory.nike.com/artifactory/all-repos'
+        }
+        
+        mavenCentral()
+    }
+    
+    publishing {
+        publications {
+            "$project.name" (MavenPublication) {
+                group project.properties.get("groupId")
+                from components.java
+                // https://docs.gradle.org/5.6.4/dsl/org.gradle.api.publish.maven.MavenPublication.html#N1C25E
+                artifact sourcesJar
+            }
+        }
+        
+        repositories {
+            maven {
+                url 'https://artifactory.nike.com/artifactory/maven'
+                credentials {
+                    username System.getenv('SA_U')
+                    password System.getenv('SA_P')
+                }
+            }
+        }
+    }
 }
 
 ext {
@@ -48,80 +140,10 @@ ext {
     junitQuickCheckVersion = '1.0'
 }
 
-apply from: file('gradle/check.gradle')
-apply from: file('gradle/release.gradle')
-apply from: file('gradle/sources.gradle')
-
-eclipse {
-    classpath {
-        downloadJavadoc = true
-        downloadSources = false
-    }
-}
-
-idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = false
-    }
-}
-
-compileJava {
-    options.compilerArgs << '-Xlint:unchecked'
-    options.fork = true
-}
-
-compileTestJava {
-    options.compilerArgs << '-Xlint:deprecation'
-    options.fork = true
-}
-
-configurations {
-    compile.exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
-    compile.exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
-}
-
-jar {
-    dependsOn versionInfo
-    baseName = artifactId
-    version = releaseVersion
-
-    exclude('application.yaml')
-}
-
 group = groupId
+version = releaseVersion
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
-
-/**
- * Centralized repositories{} declaration using allprojects{}.
- * No longer have to declare repositories{} in each subProject.
- *
- * TODO Replace allprojects{} with dependencyResolutionManagement{} in settings.gradle, once upgraded to Gradle v6.8 or above.
- * https://docs.gradle.org/6.8/userguide/declaring_repositories.html#sub:centralized-repository-declaration
- * Because allprojects{} is officially discouraged to use.
- * https://docs.gradle.org/6.8/userguide/sharing_build_logic_between_subprojects.html#sec:convention_plugins_vs_cross_configuration
- */
-allprojects {
-    repositories {
-        // Use -PuseMavenLocal=true to enable
-        if (project.hasProperty("useMavenLocal")) {
-            // DO NOT put mavenLocal() in the general area as an always-available option.
-            // It will sometimes fail your builds with bizarre errors.
-            mavenLocal()
-        }
-        
-        maven {
-            credentials {
-                username System.getenv('SA_U') //fetched from environment
-                password System.getenv('SA_P') //fetched from environment
-            }
-            url 'https://artifactory.nike.com/artifactory/all-repos'
-        }
-    
-        mavenCentral()
-    }
-}
 
 // Log4j 2 vulnerability
 ext['log4j2.version'] = '2.17.1'

@@ -1,6 +1,5 @@
-plugins {
-	id 'java'
-}
+group = rootProject.group
+version = releaseVersion
 
 dependencies {
 	// https://stackoverflow.com/a/44914700
