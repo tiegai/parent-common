@@ -5,15 +5,13 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Date;
-
 @Data
 @SuperBuilder
 @RequiredArgsConstructor
 public class ActivityExecutionRecord {
     private final String privateIp;
     private final String ecsTaskArn;
-    private final Date timestamp;
+    private final String executionBeginTime;
     private final ActivityExecutionStatusEnum status;
     private Throwable error;
 }
