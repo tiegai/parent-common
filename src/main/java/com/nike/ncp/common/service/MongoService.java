@@ -278,7 +278,14 @@ public class MongoService {
         return (T) findOneByQuery(criteriaWrapper, sortBuilder, clazz);
     }
 
-
+    /**
+     * According to the query criteria and sorting rules, query a piece of data in pages.
+     * @param criteriaWrapper
+     * @param sortBuilder
+     * @param clazz
+     * @return
+     * @param <T>
+     */
     public <T> T findOneByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
 
         Query query = new Query(criteriaWrapper.build());
@@ -289,18 +296,52 @@ public class MongoService {
 
     }
 
-
+    /**
+     * Query a piece of data according to a rule criteria.
+     * @param sortBuilder
+     * @param clazz
+     * @return
+     * @param <T>
+     */
     public <T> T findOneByQuery(SortBuilder sortBuilder, Class<T> clazz) {
         return (T) findOneByQuery(new CriteriaAndWrapper(), sortBuilder, clazz);
     }
 
-
+    /**
+     *  The query conditions are constructed by the condition constructor, and the set data of the query is returned.
+     *
+     * @param criteriaWrapper
+     * CriteriaWrapper is a conditional constructor. When constructing a condition,
+     * it is necessary to create its subclass. CriteriaAndWrapper or CriteriaOrWrapper.
+     * Eg:
+     *  CriteriaAndWrapper andWrapper = new CriteriaAndWrapper();
+     *  andWrapper.eq(propertiesName,propertiesValue).eq(propertiesName,propertiesValue);
+     * @param clazz
+     * @return
+     * @param <T>
+     */
     public <T> List<T> findListByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
         SortBuilder sortBuilder = new SortBuilder().add(Constant::getId, Sort.Direction.DESC);
         return findListByQuery(criteriaWrapper, sortBuilder, clazz);
 
     }
 
+    /**
+     *  The query conditions are constructed by the condition constructor, and the sorting rules are constructed
+     *  by the sorting constructor, and the set data of the query is returned.
+     *
+     * @param criteriaWrapper
+     * CriteriaWrapper is a conditional constructor. When constructing a condition,
+     * it is necessary to create its subclass. CriteriaAndWrapper or CriteriaOrWrapper.
+     * Eg:
+     *  CriteriaAndWrapper andWrapper = new CriteriaAndWrapper();
+     *  andWrapper.eq(propertiesName,propertiesValue).eq(propertiesName,propertiesValue);
+     *
+     * @param sortBuilder sorting rules
+     * @param clazz
+     * @return
+     * @param <T>
+     */
     public <T> List<T> findListByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
         Query query = new Query(criteriaWrapper.build());
         query.with(sortBuilder.toSort());
@@ -327,36 +368,75 @@ public class MongoService {
 //        return findPropertiesByQuery(criteriaWrapper, documentClass, property, String.class);
 //    }
 
-
+    /**
+     * Query data by id collection,and sort desc by default
+     * @param ids id collection
+     * @param clazz Document object
+     * @return
+     * @param <T>
+     */
     public <T> List<T> findListByIds(Collection<String> ids, Class<T> clazz) {
         CriteriaWrapper criteriaAndWrapper = new CriteriaAndWrapper().in(Constant::getId, ids);
         return findListByQuery(criteriaAndWrapper, clazz);
     }
 
-
+    /**
+     * Query data by id collection,and set the sorting rules as required
+     * @param ids id collection
+     * @param sortBuilder sorting rules
+     * @param clazz Document object class
+     * @return
+     * @param <T>
+     */
     public <T> List<T> findListByIds(Collection<String> ids, SortBuilder sortBuilder, Class<T> clazz) {
         CriteriaWrapper criteriaAndWrapper = new CriteriaAndWrapper().in(Constant::getId, ids);
         return findListByQuery(criteriaAndWrapper, sortBuilder, clazz);
     }
 
-
+    /**
+     * Query data by id arrays,and set the sorting rules as required.
+     * @param ids
+     * @param sortBuilder
+     * @param clazz
+     * @return
+     * @param <T>
+     */
     public <T> List<T> findListByIds(String[] ids, SortBuilder sortBuilder, Class<T> clazz) {
         return findListByIds(Arrays.asList(ids), sortBuilder, clazz);
     }
 
-
+    /**
+     * Query data by id arrays,and sort desc by default
+     * @param ids id collection
+     * @param clazz Document object class
+     * @return
+     * @param <T>
+     */
     public <T> List<T> findListByIds(String[] ids, Class<T> clazz) {
         SortBuilder sortBuilder = new SortBuilder(Constant::getId, Sort.Direction.DESC);
         return findListByIds(ids, sortBuilder, clazz);
     }
 
 
+    /**
+     * Query all data
+     * @param clazz Document object class
+     * @return
+     * @param <T>
+     */
     public <T> List<T> findAll(Class<T> clazz) {
         SortBuilder sortBuilder = new SortBuilder(Constant::getId, Sort.Direction.DESC);
         return findListByQuery(new CriteriaAndWrapper(), sortBuilder, clazz);
     }
 
 
+    /**
+     * Custom collation queries all data.
+     * @param sortBuilder Conditional constructor
+     * @param clazz
+     * @return
+     * @param <T>
+     */
     public <T> List<T> findAll(SortBuilder sortBuilder, Class<T> clazz) {
         return findListByQuery(new CriteriaAndWrapper(), sortBuilder, clazz);
     }
@@ -366,6 +446,12 @@ public class MongoService {
 //        return findIdsByQuery(new CriteriaAndWrapper(), clazz);
 //    }
 
+    /**
+     * Total number for queried data by condition
+     * @param criteriaWrapper Conditional constructor
+     * @param clazz
+     * @return
+     */
     public Long findCountByQuery(CriteriaWrapper criteriaWrapper, Class<?> clazz) {
         Long count = null;
 
@@ -379,12 +465,25 @@ public class MongoService {
         return count;
     }
 
-
+    /**
+     * Total number for queried data
+     * @param clazz Document object
+     * @return
+     */
     public Long findAllCount(Class<?> clazz) {
         return findCountByQuery(new CriteriaAndWrapper(), clazz);
     }
 
 
+    /**
+     * If you want to make paging query by skip, please call this method, but its performance is not as high as
+     * that of getting data by cursor, but it can sort queries at will, which is its advantage.
+     * @param queryBuilder Conditions for querying data
+     * @param clazz Document object
+     * @return
+     * @param <T> PageResp, the returned response data model, has already processed all the data you need,
+     *           and you can use it directly without secondary encapsulation.
+     */
     public <T> PageResp<T> findPage(PageQueryBuilder queryBuilder, Class<T> clazz) {
 
         PageResp<T> pageResp = new PageResp<T>();
@@ -402,6 +501,14 @@ public class MongoService {
         return pageResp;
     }
 
+    /**
+     * A cursor-based query that meets the conditions.
+     * @param queryBuilder Conditions for querying data
+     * @param clazz Document object
+     * @return
+     * @param <T> PageResp, the returned response data model, has already processed all the data you need,
+     *           and you can use it directly without secondary encapsulation.
+     */
     public <T> List<T> findListByCursorWithCondition(PageQueryBuilder queryBuilder, Class<T> clazz) {
         Query query = queryBuilder.getQuery();
         Document condition = query.getQueryObject();
@@ -440,6 +547,13 @@ public class MongoService {
         return list;
     }
 
+
+    /**
+     * Query all the data in the collection based on cursor. It is recommended to call this method if you want to query all data.
+     * @param clazz Document object
+     * @return
+     * @param <T>
+     */
     public <T> List<T> findAllByCursor(Class<T> clazz) {
         MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz));
         FindIterable<Document> iterable = collection.find();
@@ -449,6 +563,17 @@ public class MongoService {
         return new ArrayList<T>();
     }
 
+    /**
+     *  Paging query data based on cursor, but only sorting query according to id can be effective.
+     *  If data is sorted by other properties, paging effect cannot be guaranteed.
+     * @param queryBuilder Conditions for querying data
+     * @param lastId Get the id of the last piece of data last time. Every time you query, it will be included in the
+     *               page attribute lastId of the response data and returned to you.The first query can pass null,
+     *               and then each query must carry a return.
+     * @param clazz Document object
+     * @return
+     * @param <T> PageResp<T>. Model data
+     */
     public <T> PageResp<T> findPageByCursor(PageQueryBuilder queryBuilder, String lastId, Class<T> clazz) {
         PageResp<T> pageResp = new PageResp<>();
         Page pageResult = Page.builder().build();
@@ -486,6 +611,14 @@ public class MongoService {
         return pageResp;
     }
 
+    /**
+     * Get the total number of transmitted condition through MongoCollection, and then calculate the total number of pages of query data.
+     * This method mainly serves cursor query data.
+     * @param collection
+     * @param queryBuilder
+     * @param condition
+     * @param pageResult
+     */
     private void calculatePages(MongoCollection<Document> collection, PageQueryBuilder queryBuilder,
                                 Document condition, Page pageResult) {
         int limit = queryBuilder.getQuery().getLimit();
@@ -501,6 +634,7 @@ public class MongoService {
         }
         pageResult.setTotal(count);
     }
+
 
     private void calculatePages(PageQueryBuilder queryBuilder, Page pageResult, Class<?> clazz) {
         Long count = null;
