@@ -43,5 +43,6 @@ public class Journey {
     private Date suspendedTime;
     private String status;
     private boolean freqControl;
+    private List<String> tags;
     private List<JourneyActivity> journeyActivities;
 }
