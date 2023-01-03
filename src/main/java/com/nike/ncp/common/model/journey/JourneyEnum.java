@@ -38,6 +38,7 @@ public enum JourneyEnum {
     SUSPENDED_BY_NAME("suspendedByName"),
     SUSPENDED_TIME("suspendedTime"),
     STATUS("status"),
+    TAGS("tags"),
     JOURNEY_ACTIVITIES("journeyActivities");
 
     private String name;
