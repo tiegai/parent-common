@@ -11,10 +11,10 @@ import com.nike.ncp.common.model.pagination.Page;
 import com.nike.ncp.common.model.pagination.PageResp;
 import com.nike.ncp.common.mongo.CriteriaAndWrapper;
 import com.nike.ncp.common.mongo.CriteriaWrapper;
-import com.nike.ncp.common.mongo.bean.CreateTime;
+import com.nike.ncp.common.mongo.bean.CreatedTime;
 import com.nike.ncp.common.mongo.bean.SortBuilder;
 import com.nike.ncp.common.mongo.bean.UpdateBuilder;
-import com.nike.ncp.common.mongo.bean.UpdateTime;
+import com.nike.ncp.common.mongo.bean.UpdatedTime;
 import com.nike.ncp.common.mongo.reflection.SerializableFunction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,8 +69,8 @@ public class MongoService {
         Object objectOrg = StrUtil.isNotEmpty(id) ? findById(id, object.getClass()) : null;
 
         if (objectOrg == null) {
-            setCreateTime(object, time);
-            setUpdateTime(object, time);
+            setCreatedTime(object, time);
+            setUpdatedTime(object, time);
             ReflectUtil.setFieldValue(object, Constant.ID, null);
             if (StringUtils.isNotEmpty(collectionName)) {
                 mongoTemplate.save(object, collectionName);
@@ -86,7 +86,7 @@ public class MongoService {
                     ReflectUtil.setFieldValue(objectOrg, field, ReflectUtil.getFieldValue(object, field));
                 }
             }
-            setUpdateTime(objectOrg, time);
+            setUpdatedTime(objectOrg, time);
             if (StringUtils.isNotEmpty(collectionName)) {
                 mongoTemplate.save(object, collectionName);
             } else {
@@ -122,24 +122,24 @@ public class MongoService {
         Long time = System.currentTimeMillis();
         for (Object object : list) {
             ReflectUtil.setFieldValue(object, Constant.ID, null);
-            setCreateTime(object, time);
-            setUpdateTime(object, time);
+            setCreatedTime(object, time);
+            setUpdatedTime(object, time);
         }
     }
 
-    private void setUpdateTime(Object object, Long time) {
+    private void setUpdatedTime(Object object, Long time) {
         Field[] fields = ReflectUtil.getFields(object.getClass());
         for (Field field : fields) {
-            if (field.isAnnotationPresent(UpdateTime.class) && field.getType().equals(LocalDateTime.class)) {
+            if (field.isAnnotationPresent(UpdatedTime.class) && field.getType().equals(LocalDateTime.class)) {
                 ReflectUtil.setFieldValue(object, field, time);
             }
         }
     }
 
-    private void setCreateTime(Object object, Long time) {
+    private void setCreatedTime(Object object, Long time) {
         Field[] fields = ReflectUtil.getFields(object.getClass());
         for (Field field : fields) {
-            if (field.isAnnotationPresent(CreateTime.class) && field.getType().equals(LocalDateTime.class)) {
+            if (field.isAnnotationPresent(CreatedTime.class) && field.getType().equals(LocalDateTime.class)) {
                 ReflectUtil.setFieldValue(object, field, time);
             }
         }
@@ -174,7 +174,7 @@ public class MongoService {
             return;
         }
         Long time = System.currentTimeMillis();
-        setUpdateTime(object, time);
+        setUpdatedTime(object, time);
         mongoTemplate.save(object);
     }
 

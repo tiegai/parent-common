@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 public class BaseModel implements Serializable {
     @Id
     private String id;
-    @CreateTime
-    private LocalDateTime createTime;
-    @UpdateTime
-    private LocalDateTime updateTime;
+    @CreatedTime
+    private LocalDateTime createdTime;
+    @UpdatedTime
+    private LocalDateTime updatedTime;
 
 
     public String getId() {
@@ -22,19 +22,19 @@ public class BaseModel implements Serializable {
         this.id = id;
     }
 
-    public LocalDateTime getCreateTime() {
-        return createTime;
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
     }
 
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
     }
 
-    public LocalDateTime getUpdateTime() {
-        return updateTime;
+    public LocalDateTime getUpdatedTime() {
+        return updatedTime;
     }
 
-    public void setUpdateTime(LocalDateTime updateTime) {
-        this.updateTime = updateTime;
+    public void setUpdatedTime(LocalDateTime updatedTime) {
+        this.updatedTime = updatedTime;
     }
 }
