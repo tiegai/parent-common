@@ -16,7 +16,7 @@ import java.security.cert.X509Certificate;
 
 @Slf4j
 @Component
-@Profile(value = {"!local","!test"})
+@Profile(value = {"!local", "!test"})
 public class InitializationSSLCertificateConfig implements InitializingBean {
 
     @Override

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@Profile(value = {"!local","!test"})
+@Profile(value = {"!local", "!test"})
 public class MongoConfiguration {
 
     private final MongoProperties mongoProperties;
