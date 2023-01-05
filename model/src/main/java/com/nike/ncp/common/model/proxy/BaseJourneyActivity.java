@@ -32,6 +32,8 @@ public abstract class BaseJourneyActivity {
     @RequiredArgsConstructor
     public static class Activity {
         @NonNull
+        private ObjectId id;
+        @NonNull
         private ActivityCategoryEnum category;
     }
 }
