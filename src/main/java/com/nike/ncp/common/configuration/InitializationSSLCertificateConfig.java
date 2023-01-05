@@ -2,7 +2,7 @@ package com.nike.ncp.common.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -16,7 +16,7 @@ import java.security.cert.X509Certificate;
 
 @Slf4j
 @Component
-@Profile(value = {"!local", "!test"})
+@ConditionalOnProperty(value = "db.ssl.enabled", havingValue = "true")
 public class InitializationSSLCertificateConfig implements InitializingBean {
 
     @Override
