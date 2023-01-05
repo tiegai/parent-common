@@ -25,6 +25,7 @@ ext {
     // project dependency versions
     spindleVersion = '7.0.1.54'
     springBeansVersion = '5.3.22'
+    springAopVersion = '2.7.3'
     tracingCoreVersion = '1.0.11'
     nikeInternalUtilVersion = '0.9.0.1'
     lombokVersion = '1.18.24'
@@ -125,6 +126,9 @@ dependencies {
     compile("org.springframework:spring-web:${springBeansVersion}")
     compile("org.springframework:spring-webmvc:${springBeansVersion}")
     compile("org.springframework:spring-core:${springBeansVersion}")
+    compile("org.springframework.boot:spring-boot-starter-aop:${springAopVersion}")
+    compile("org.springframework.boot:spring-boot-starter-web:${springAopVersion}")
+    implementation 'javax.servlet:servlet-api:2.5'
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
     // Test dependencies
