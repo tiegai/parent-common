@@ -5,6 +5,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Deprecated. Please use {@link ActivityFeedbackRequest}, instead.
+ */
+@Deprecated
 @Data
 @SuperBuilder
 @RequiredArgsConstructor
