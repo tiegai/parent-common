@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Service
-public class AuditLogPublishService {
+public class AuditLogPublish {
     @Value("${info.app.name}")
     private String appName;
     @Autowired
