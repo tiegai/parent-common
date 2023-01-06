@@ -18,3 +18,5 @@ pluginManagement {
 
 rootProject.name = artifactId
 include 'model'
+include 'executor'
+

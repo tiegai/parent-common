@@ -1,0 +1,28 @@
+plugins {
+    // TODO upgrade to the latest Gradle 7.x to allow the latest org.springframework.boot
+    // FIXME including these plugins unexpectedly skips :executor:jar and fails publishing
+    //id 'org.springframework.boot' version '2.3.12.RELEASE'
+    //id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'com.nike.gc.ncp.common'
+version = releaseVersion
+
+dependencies {
+    api rootProject
+    api project(":model")
+    
+    api "org.springframework:spring-webmvc:${springBeansVersion}"
+    // TODO incorporate org.springframework.boot plugins to omit the version part
+    api "org.springframework.data:spring-data-mongodb:3.4.6"
+    
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
