@@ -131,6 +131,8 @@ dependencies {
     compile("org.apache.tomcat.embed:tomcat-embed-core:${springBootTomcatVersion}")
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    // Swagger UI
+    implementation("io.springfox:springfox-swagger2:2.9.2")
     // Test dependencies
     testCompile("junit:junit:${junitVersion}")
     testCompile("org.mockito:mockito-core:${mockitoVersion}")
