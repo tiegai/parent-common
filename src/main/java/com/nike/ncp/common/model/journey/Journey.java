@@ -42,6 +42,9 @@ public class Journey {
     private String suspendedByName;
     private Date suspendedTime;
     private String status;
+    private String executionStatus;
+    private String purpose;
+    private SendChannel sendChannel;
     private boolean freqControl;
     private List<String> tags;
     private List<JourneyActivity> journeyActivities;
