@@ -12,10 +12,6 @@ dependencies {
     api rootProject
     api project(":model")
     
-    api "org.springframework:spring-webmvc:${springBeansVersion}"
-    // TODO incorporate org.springframework.boot plugins to omit the version part
-    api "org.springframework.data:spring-data-mongodb:3.4.6"
-    
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     

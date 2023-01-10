@@ -1,8 +1,12 @@
 package com.nike.ncp.common.executor.controller;
 
+import com.nike.ncp.common.executor.aspect.ActivityDispatchAspect;
 import com.nike.ncp.common.executor.task.ActivityDispatchTask;
+import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
 import com.nike.ncp.common.model.proxy.DispatchedActivity;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,12 +51,15 @@ public interface ActivityDispatchControllerV1 {
      * @param journeyInstanceId Journey's instance ID
      * @param activityId Journey activity's ID
      * @param activityPayload Journey activity's payload
-     * @return {@link ResponseEntity}&#60;{@link ActivityExecutionRecord}&#62;
+     * @return Ideally, {@link ResponseEntity}&#60;{@link ActivityExecutionStatusEnum#ACCEPTED} || {@link ActivityExecutionStatusEnum#REJECTED} || {@link ActivityExecutionStatusEnum#FAILED}&#62; <br/><br/>
+     * After returned, {@link ActivityDispatchAspect#aroundActivityDispatch(ProceedingJoinPoint)} will intercept and
+     * convert this return value into a {@link ResponseEntity}&#60;{@link ActivityExecutionRecord}&#62;,
+     * and return to <a href="https://github.com/nike-gc-ncp/ncp-proxy">One-NCP proxy</a>.
      */
     @PutMapping("/journeyInstance/{journeyInstanceId}/activity/{activityId}")
-    ResponseEntity<ActivityExecutionRecord> putActivity(
-            @PathVariable String journeyInstanceId,
-            @PathVariable String activityId,
+    ResponseEntity<ActivityExecutionStatusEnum> putActivity(
+            @PathVariable ObjectId journeyInstanceId,
+            @PathVariable ObjectId activityId,
             @RequestBody DispatchedActivity activityPayload
     );
 }

@@ -53,6 +53,7 @@ import java.util.concurrent.Future;
  * </pre>
  * @param <T> the return data type of your {@link ActivityDispatchTask#main}
  */
+@Deprecated
 @Data
 @RequiredArgsConstructor
 public abstract class ActivityDispatchTask<T> {
@@ -103,7 +104,7 @@ public abstract class ActivityDispatchTask<T> {
     }
 
     protected <E extends Exception> void handleMainException(E exception) throws E {
-        final String journeyInstanceId = Objects.requireNonNullElse(
+        final String journeyDefinitionId = Objects.requireNonNullElse(
                 dispatchedActivity.getJourney(), new Journey()
         ).getId();
         final String activityCategory = Objects.requireNonNullElse(
@@ -118,7 +119,7 @@ public abstract class ActivityDispatchTask<T> {
                 .build();
 
         var failure = ActivityFeedbackRequest.builder()
-                .journeyDefinitionId(new ObjectId(journeyInstanceId))
+                .journeyDefinitionId(new ObjectId(journeyDefinitionId))
                 .journeyInstanceId(this.journeyInstanceId)
                 .activityId(this.activityId)
                 .activityCategory(ActivityCategoryEnum.valueOf(activityCategory))
