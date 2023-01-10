@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableSwagger2
-@EnableWebMvc
 @EnableSwaggerBootstrapUi
 @Getter
 public class SwaggerConfiguration implements WebMvcConfigurer {
