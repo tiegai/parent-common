@@ -73,6 +73,15 @@ public final class PageQueryBuilder {
         return this;
     }
 
+    public PageQueryBuilder gt(String columnName, Date dateValue) {
+        if (dateValue != null) {
+            Criteria criteria = Criteria.where(columnName).gt(dateValue);
+            query.addCriteria(criteria);
+            countQuery.addCriteria(criteria);
+        }
+        return this;
+    }
+
     public PageQueryBuilder lte(String columnName, Date dateValue) {
         if (dateValue != null) {
             Criteria criteria = Criteria.where(columnName).lte(dateValue);

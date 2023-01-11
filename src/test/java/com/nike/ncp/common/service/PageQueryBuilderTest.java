@@ -61,7 +61,8 @@ public class PageQueryBuilderTest {
         query.like("columnC", "value");
         query.like("columnD", null);
         query.gte("columnE", Date.from(Instant.now()));
-        query.lte("columnF", Date.from(Instant.now()));
+        query.gt("columnF", Date.from(Instant.now()));
+        query.lte("columnG", Date.from(Instant.now()));
         assertNotNull(query.getCountQuery());
         assertNotNull(query.getQuery());
     }
