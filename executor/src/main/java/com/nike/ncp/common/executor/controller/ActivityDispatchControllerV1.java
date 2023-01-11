@@ -1,12 +1,13 @@
 package com.nike.ncp.common.executor.controller;
 
 import com.nike.ncp.common.executor.aspect.ActivityDispatchAspect;
-import com.nike.ncp.common.executor.task.ActivityDispatchTask;
 import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
+import com.nike.ncp.common.model.journey.AudienceConfig;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
 import com.nike.ncp.common.model.proxy.DispatchedActivity;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.bson.types.ObjectId;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,28 +22,32 @@ import org.springframework.web.bind.annotation.RestController;
  * <p/>
  * <pre class="code">
  * &#64;{@link RestController}
- * public class ConcreteController implements {@link ActivityDispatchControllerV1} {
+ * public class ConcreteController implements {@link ActivityDispatchControllerV1}&#60;{@link AudienceConfig}&#62; {
  *      &#64;Override
- *      public {@link ResponseEntity}<{@link ActivityExecutionRecord}> putActivity(
+ *      public {@link ResponseEntity}<{@link ActivityExecutionStatusEnum}> putActivity(
  *          &#64;{@link PathVariable} String journeyInstanceId,
  *          &#64;{@link PathVariable} String activityId,
- *          &#64;{@link RequestBody} {@link DispatchedActivity} activityPayload
+ *          &#64;{@link RequestBody} {@link DispatchedActivity}&#60;{@link AudienceConfig}&#62; activityPayload
  *      ) {
- *          // all your logic <--------------
- *          // It is recommended to wrap your logic into a concrete {@link ActivityDispatchTask} and {@link ActivityDispatchTask#execAsync} to run it asynchronously.
+ *          // do everything you need to do, ideally asynchronously
  *
- *          // return with an {@link ActivityExecutionRecord} to indicate that you have accepted the activity.
- *          var executionRecord = {@link ActivityExecutionRecord}.builder().build();
- *          return {@link ResponseEntity}.accepted().body(executionRecord).build();
+ *          // return an {@link ActivityExecutionStatusEnum} to indicate your decision about this {@link DispatchedActivity}.
+ *          return {@link ResponseEntity}
+ *                  .status({@link HttpStatus})
+ *                  .body({@link ActivityExecutionStatusEnum})
+ *                  .build();
  *      }
  * }
  * </pre>
- * <p/>
  * Learn more about how <a href="https://www.baeldung.com/spring-interface-driven-controllers#2-interface">interface-driven controller</a> works.
+ *
+ * @param <CONFIG_TYPE> Data type of {@link DispatchedActivity.Activity#getConfig()}. <br/>
+ *                     Consult authors of <a href="https://github.com/nike-gc-ncp/ncp-journeyengine">ncp-journeyengine</a>
+ *                     for a list of available {@code CONFIG_TYPE}s.
  */
 @RestController
 @RequestMapping("/v1")
-public interface ActivityDispatchControllerV1 {
+public interface ActivityDispatchControllerV1<CONFIG_TYPE> {
     /**
      * Accepts and processes a {@link DispatchedActivity} sent from <a href="https://github.com/nike-gc-ncp/ncp-proxy">One-NCP proxy</a>.
      * <br/>
@@ -60,6 +65,6 @@ public interface ActivityDispatchControllerV1 {
     ResponseEntity<ActivityExecutionStatusEnum> putActivity(
             @PathVariable ObjectId journeyInstanceId,
             @PathVariable ObjectId activityId,
-            @RequestBody DispatchedActivity activityPayload
+            @RequestBody DispatchedActivity<CONFIG_TYPE> activityPayload
     );
 }

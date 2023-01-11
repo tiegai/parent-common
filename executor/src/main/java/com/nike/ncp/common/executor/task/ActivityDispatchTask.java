@@ -2,8 +2,6 @@ package com.nike.ncp.common.executor.task;
 
 import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.journey.ActivityCategoryEnum;
-import com.nike.ncp.common.model.journey.Journey;
-import com.nike.ncp.common.model.journey.JourneyActivity;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackRequest;
 import com.nike.ncp.common.model.proxy.DispatchedActivity;
@@ -104,11 +102,11 @@ public abstract class ActivityDispatchTask<T> {
     }
 
     protected <E extends Exception> void handleMainException(E exception) throws E {
-        final String journeyDefinitionId = Objects.requireNonNullElse(
-                dispatchedActivity.getJourney(), new Journey()
-        ).getId();
-        final String activityCategory = Objects.requireNonNullElse(
-                dispatchedActivity.getActivity(), new JourneyActivity()
+        final ObjectId journeyDefinitionId = Objects.requireNonNullElse(
+                dispatchedActivity.getJourney(), new DispatchedActivity.Journey()
+        ).getDefinitionId();
+        final @NonNull ActivityCategoryEnum activityCategory = Objects.requireNonNullElse(
+                dispatchedActivity.getActivity(), new DispatchedActivity.Activity<>()
         ).getCategory();
         var executionRecord = ActivityExecutionRecord.builder()
                 .privateIp(null)
@@ -119,10 +117,10 @@ public abstract class ActivityDispatchTask<T> {
                 .build();
 
         var failure = ActivityFeedbackRequest.builder()
-                .journeyDefinitionId(new ObjectId(journeyDefinitionId))
+                .journeyDefinitionId(journeyDefinitionId)
                 .journeyInstanceId(this.journeyInstanceId)
                 .activityId(this.activityId)
-                .activityCategory(ActivityCategoryEnum.valueOf(activityCategory))
+                .activityCategory(activityCategory)
                 .executionRecord(executionRecord)
                 .build();
 
