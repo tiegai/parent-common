@@ -1,5 +1,6 @@
 package com.nike.ncp.common.service;
 
+import com.nike.ncp.common.configuration.Constant;
 import com.nike.ncp.common.model.AuditLogEvent;
 import com.nike.ncp.common.model.auditlog.OperTypeEnum;
 import com.nike.ncp.common.model.auditlog.SysAuditLog;
@@ -10,7 +11,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -33,8 +33,7 @@ public class AuditLogPublish {
         sysAuditLog.setAppName(appName);
         sysAuditLog.setOperType(operType.name());
         sysAuditLog.setDescription(description);
-        sysAuditLog.setOperUser("SYSTEM");
-        sysAuditLog.setAuditTime(LocalDateTime.now());
+        sysAuditLog.setOperUser(request.getHeader(Constant.USER_EMAIL));
         sysAuditLog.setAction(request.getMethod());
         sysAuditLog.setOperUrl(request.getRequestURI());
         applicationEventPublisher.publishEvent(new AuditLogEvent(this, sysAuditLog));

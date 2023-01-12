@@ -43,7 +43,6 @@ public class AuditLogAspect {
         sysAuditLog.setOperType(auditLog.operType().name());
         sysAuditLog.setDescription(auditLog.description());
         sysAuditLog.setOperUser("SYSTEM");
-        sysAuditLog.setAuditTime(LocalDateTime.now());
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
         if (Objects.nonNull(attributes)) {
             ServletRequestAttributes requestAttributes = (ServletRequestAttributes) attributes;
