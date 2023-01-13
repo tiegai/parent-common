@@ -2,7 +2,7 @@ package com.nike.ncp.common.executor.task;
 
 import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.journey.ActivityCategoryEnum;
-import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
+import com.nike.ncp.common.model.proxy.ActivityExecutionFailureRecord;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackRequest;
 import com.nike.ncp.common.model.proxy.DispatchedActivity;
 import lombok.Data;
@@ -108,11 +108,11 @@ public abstract class ActivityDispatchTask<T> {
         final @NonNull ActivityCategoryEnum activityCategory = Objects.requireNonNullElse(
                 dispatchedActivity.getActivity(), new DispatchedActivity.Activity<>()
         ).getCategory();
-        var executionRecord = ActivityExecutionRecord.builder()
-                .privateIp(null)
-                .ecsTaskArn(null)
+        var executionRecord = ActivityExecutionFailureRecord.builder()
+                .privateIp("DUMMY_IP")
+                .ecsTaskArn("DUMMY_ARN")
                 .status(ActivityExecutionStatusEnum.FAILED)
-                .error(exception)
+                .failure(ActivityExecutionFailureRecord.Failure.builder().message(exception.getMessage()).build())
                 .endTime(LocalDateTime.now())
                 .build();
 

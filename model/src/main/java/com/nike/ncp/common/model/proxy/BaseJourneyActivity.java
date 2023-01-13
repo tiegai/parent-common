@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 
+@Deprecated
 @Data
 @SuperBuilder
 @NoArgsConstructor

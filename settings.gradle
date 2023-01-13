@@ -1,8 +1,11 @@
-/**
- * Centralized plugin repository declaration as an optional replacement of buildscript.repositories{} of build.gradle
- * https://docs.gradle.org/current/userguide/plugins.html#sec:custom_plugin_repositories
- */
 pluginManagement {
+	/**
+	 * Centralized plugin repository declaration
+	 * https://docs.gradle.org/5.6.4/userguide/plugins.html#sec:custom_plugin_repositories
+	 * equivalent to buildscript.repositories{} in build.gradle
+	 * 		as to buildscript.dependencies{classpath()} before `apply plugin`.
+	 * 		https://docs.gradle.org/5.6.4/userguide/plugins.html#sec:applying_plugins_buildscript
+	 */
 	repositories {
 		maven {
 			credentials {

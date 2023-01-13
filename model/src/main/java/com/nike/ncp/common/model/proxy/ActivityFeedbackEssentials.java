@@ -1,6 +1,6 @@
 package com.nike.ncp.common.model.proxy;
 
-import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
+import com.nike.ncp.common.model.journey.ActivityCategoryEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +8,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDateTime;
+import org.bson.types.ObjectId;
 
 @Data
 @SuperBuilder
@@ -17,13 +16,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @ToString(doNotUseGetters = true)
-public class ActivityExecutionRecord {
+public class ActivityFeedbackEssentials {
     @NonNull
-    private String privateIp;
+    private ObjectId journeyInstanceId;
+    private ObjectId journeyDefinitionId;
     @NonNull
-    private String ecsTaskArn;
+    private ObjectId activityId;
     @NonNull
-    private ActivityExecutionStatusEnum status;
-    private LocalDateTime beginTime;
-    private LocalDateTime endTime;
+    private ActivityCategoryEnum activityCategory;
 }

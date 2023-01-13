@@ -119,6 +119,7 @@ allprojects {
 ext {
     // project dependency versions
     spindleVersion = '7.0.1.54'
+    springBootVersion = '2.3.12.RELEASE'
     springBeansVersion = '5.3.22'
     springAopVersion = '2.7.3'
     springBootTomcatVersion = '9.0.65'
@@ -149,6 +150,10 @@ targetCompatibility = JavaVersion.VERSION_11
 ext['log4j2.version'] = '2.17.1'
 
 dependencies {
+    // you no longer have to specify versions when declaring spring-boot dependencies
+    // find a list of available spring-boot modules at https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies/2.3.12.RELEASE
+    api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+  
     compile("org.springframework.boot:spring-boot-starter-data-mongodb:2.7.6")
     compile("javax.annotation:javax.annotation-api:1.2")
     compile("com.fasterxml.jackson.core:jackson-core:2.13.3")

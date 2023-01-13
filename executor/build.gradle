@@ -1,16 +1,12 @@
-plugins {
-    // TODO upgrade to the latest Gradle 7.x to allow the latest org.springframework.boot
-    // FIXME including these plugins unexpectedly skips :executor:jar and fails publishing
-    //id 'org.springframework.boot' version '2.3.12.RELEASE'
-    //id 'io.spring.dependency-management' version '1.1.0'
-}
-
 group = 'com.nike.gc.ncp.common'
 version = releaseVersion
 
 dependencies {
     api rootProject
     api project(":model")
+    
+    // Spring
+    api "org.springframework.boot:spring-boot-starter-webflux"
     
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
