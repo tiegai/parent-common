@@ -118,6 +118,8 @@ allprojects {
 
 ext {
     // project dependency versions
+    awsSdk1Version = '1.12.383'
+    awsSdk2Version = '2.19.15'
     spindleVersion = '7.0.1.54'
     springBootVersion = '2.3.12.RELEASE'
     springBeansVersion = '5.3.22'
@@ -153,7 +155,12 @@ dependencies {
     // you no longer have to specify versions when declaring spring-boot dependencies
     // find a list of available spring-boot modules at https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies/2.3.12.RELEASE
     api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
-  
+    // find a list of available AWS v1 modules at https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-bom/1.12.383
+    api platform("com.amazonaws:aws-java-sdk-bom:${awsSdk1Version}")
+    // find a list of available AWS v2 modules at https://mvnrepository.com/artifact/software.amazon.awssdk/bom/2.19.15
+    api platform("software.amazon.awssdk:bom:${awsSdk2Version}")
+    // learn more about the differences between AWS v1 and v2 at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/migration-whats-different.html
+    
     compile("org.springframework.boot:spring-boot-starter-data-mongodb:2.7.6")
     compile("javax.annotation:javax.annotation-api:1.2")
     compile("com.fasterxml.jackson.core:jackson-core:2.13.3")
