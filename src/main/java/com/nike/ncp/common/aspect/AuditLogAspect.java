@@ -18,7 +18,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Slf4j
@@ -38,7 +37,7 @@ public class AuditLogAspect {
     public void doAfter(JoinPoint joinPoint) {
         AuditLog auditLog = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(AuditLog.class);
         SysAuditLog sysAuditLog = new SysAuditLog();
-        sysAuditLog.setResourceType(auditLog.resourceType());
+        sysAuditLog.setResourceType(auditLog.resourceType().value());
         sysAuditLog.setAppName(appName);
         sysAuditLog.setOperType(auditLog.operType().name());
         sysAuditLog.setDescription(auditLog.description());

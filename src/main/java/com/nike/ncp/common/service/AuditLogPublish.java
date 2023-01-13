@@ -3,6 +3,7 @@ package com.nike.ncp.common.service;
 import com.nike.ncp.common.configuration.Constant;
 import com.nike.ncp.common.model.AuditLogEvent;
 import com.nike.ncp.common.model.auditlog.OperTypeEnum;
+import com.nike.ncp.common.model.auditlog.ResourceTypeEnum;
 import com.nike.ncp.common.model.auditlog.SysAuditLog;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,9 @@ public class AuditLogPublish {
         log.info("event=record_audit_log,Event-based publishing logging succeeded");
     }
 
-    public void publishEvent(String resourceType, String description, OperTypeEnum operType) {
+    public void publishEvent(ResourceTypeEnum resourceType, String description, OperTypeEnum operType) {
         SysAuditLog sysAuditLog = new SysAuditLog();
-        sysAuditLog.setResourceType(resourceType);
+        sysAuditLog.setResourceType(resourceType.value());
         sysAuditLog.setAppName(appName);
         sysAuditLog.setOperType(operType.name());
         sysAuditLog.setDescription(description);
