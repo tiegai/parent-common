@@ -27,7 +27,12 @@ public class ActivityFailureFeedbackRequest extends ActivityFeedbackRequest {
     @Deprecated
     @Override
     public void setExecutionRecord(@NonNull ActivityExecutionRecord executionRecord) {
-        this.setExecutionRecord((ActivityExecutionFailureRecord) executionRecord);
+        if (executionRecord instanceof ActivityExecutionFailureRecord) {
+            this.setExecutionRecord((ActivityExecutionFailureRecord) executionRecord);
+        } else {
+            throw new UnsupportedOperationException(String.format("Expected type: %s. Actual type: %s",
+                    ActivityExecutionFailureRecord.class.getName(), executionRecord.getClass().getName()));
+        }
     }
 
     /**
@@ -60,10 +65,8 @@ public class ActivityFailureFeedbackRequest extends ActivityFeedbackRequest {
             C extends ActivityFailureFeedbackRequest,
             B extends ActivityFailureFeedbackRequestBuilder<C, B>
             > extends ActivityFeedbackRequestBuilder<C, B> { // https://stackoverflow.com/a/63861259
-        private ActivityExecutionFailureRecord executionRecord;
-
-        public B executionRecord(ActivityExecutionFailureRecord executionRecord) {
-            this.executionRecord = executionRecord;
+        public B executionRecord(ActivityExecutionFailureRecord failureRecord) {
+            super.executionRecord(failureRecord);
             return this.self();
         }
 
@@ -72,8 +75,13 @@ public class ActivityFailureFeedbackRequest extends ActivityFeedbackRequest {
          */
         @Deprecated
         @Override
-        public B executionRecord(ActivityExecutionRecord executionRecord) {
-            return this.executionRecord((ActivityExecutionFailureRecord) executionRecord);
+        public B executionRecord(ActivityExecutionRecord record) {
+            if (record instanceof ActivityExecutionFailureRecord) {
+                return this.executionRecord((ActivityExecutionFailureRecord) record);
+            } else {
+                throw new UnsupportedOperationException(String.format("Expected type: %s. Actual type: %s",
+                        ActivityExecutionFailureRecord.class.getName(), record.getClass().getName()));
+            }
         }
     }
 }

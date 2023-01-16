@@ -46,7 +46,7 @@ spotbugsTest {
         xml.withMessages = true  // This is important to generate extra information for spotbugsHtml
 
         // You can only choose xml or html, but not both :-(  The spotbugsHtml task (below) works around this.
-        html.enabled = false
+        html.enabled = true
     }
 }
 

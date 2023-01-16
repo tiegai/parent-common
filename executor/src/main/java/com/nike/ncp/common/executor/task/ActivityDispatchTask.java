@@ -124,6 +124,8 @@ public abstract class ActivityDispatchTask<T> {
                 .executionRecord(executionRecord)
                 .build();
 
+        assert null != failure;
+
         // TODO send failure to ncp-proxy
 
         throw exception;

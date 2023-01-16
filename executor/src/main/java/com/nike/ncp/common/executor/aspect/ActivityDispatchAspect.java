@@ -29,11 +29,14 @@ public class ActivityDispatchAspect {
      * Intercepts {@link ActivityDispatchControllerV1#putActivity(ObjectId, ObjectId, DispatchedActivity)}
      */
     @Pointcut(value = "activityDispatchInterface() && putActivityMethod()")
-    public void activityDispatch() {}
+    public void activityDispatch() {
+    }
     @Pointcut(value = "target(com.nike.ncp.common.executor.controller.ActivityDispatchControllerV1)")
-    public void activityDispatchInterface() {}
+    public void activityDispatchInterface() {
+    }
     @Pointcut(value = "execution(org.springframework.http.ResponseEntity<com.nike.ncp.common.model.ActivityExecutionStatusEnum> *..putActivity(org.bson.types.ObjectId,org.bson.types.ObjectId,*))")
-    public void putActivityMethod() {}
+    public void putActivityMethod() {
+    }
 
     /**
      * Populates logic around {@link ActivityDispatchControllerV1#putActivity(ObjectId, ObjectId, DispatchedActivity)}.
@@ -51,12 +54,13 @@ public class ActivityDispatchAspect {
         ActivityExecutionStatusEnum activityStatus;
 
         try {
-            proceed = (ResponseEntity<ActivityExecutionStatusEnum>) pjp.proceed();
+            proceed = (ResponseEntity<ActivityExecutionStatusEnum>) Objects.requireNonNull(pjp.proceed());
 
-            activityStatus = Objects.requireNonNull(
-                    Objects.requireNonNull(proceed)
-                            .getBody()
-            );
+            activityStatus = proceed.getBody();
+            if (null == activityStatus) {
+                throw new UnsupportedOperationException();
+            }
+
             recordBuilder.status(activityStatus);
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
