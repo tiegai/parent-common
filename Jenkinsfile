@@ -39,7 +39,7 @@ def config = [
     ],
     publish : [
         image       : "openjdk:11-jdk",
-        cmd         : "./gradlew uploadArchives",
+        cmd         : "./gradlew publish",
         cerberus : [
             env: "china-v2",
             sdbPath: "shared/notification/credentials", //Cerberus credentials path
