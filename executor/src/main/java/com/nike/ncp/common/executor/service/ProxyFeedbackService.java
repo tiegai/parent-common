@@ -57,6 +57,7 @@ public class ProxyFeedbackService {
      * @param essentials Essential information about this feedback
      * @return Bodiless {@link Mono}&#60;{@link ResponseEntity}&#62;
      */
+    @SuppressWarnings("unused")
     public Mono<ResponseEntity<Void>> success(ActivityFeedbackEssentials essentials) {
         return this.success(essentials, null);
     }
@@ -67,6 +68,7 @@ public class ProxyFeedbackService {
      * @param failure What went wrong with the activity
      * @return Bodiless {@link Mono}&#60;{@link ResponseEntity}&#62;
      */
+    @SuppressWarnings("unused")
     public Mono<ResponseEntity<Void>> failure(ActivityFeedbackEssentials essentials, Throwable failure) {
         return this.failure(essentials, failure, null);
     }
@@ -114,7 +116,7 @@ public class ProxyFeedbackService {
                     .status(FAILED)
                     .failure(ActivityExecutionFailureRecord.Failure.builder()
                             .message(failure.getMessage())
-                            .traceId(null) // TODO
+                            .traceId(null) // TODO distributed traceId, from wingtips?
                             .build()
                     );
 
@@ -161,9 +163,10 @@ public class ProxyFeedbackService {
     private static ActivityExecutionRecordBuilder<?, ?> getExecutionRecordBuilder() {
 
         return ActivityExecutionRecord.builder()
-                .endTime(LocalDateTime.now())
-                .ecsTaskArn("DUMMY_ARN") // TODO
-                .privateIp("DUMMY_IP") // TODO
+                .endTime(LocalDateTime.now()) // TODO timezone, ensure UTC everywhere, from code to DB
+                // TODO add container ARN, too?
+                .ecsTaskArn("DUMMY_ARN") // TODO retrieve from ECS container metadata
+                .privateIp("DUMMY_IP") // TODO retrieve from ECS container metadata
                 .status(DONE);
     }
 

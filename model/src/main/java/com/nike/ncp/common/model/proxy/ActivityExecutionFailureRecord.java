@@ -21,13 +21,14 @@ public class ActivityExecutionFailureRecord extends ActivityExecutionRecord {
      * Declaring {@link ActivityExecutionFailureRecord#builder(ActivityExecutionRecord)}
      * without this no-args {@link ActivityExecutionFailureRecord#builder()}
      * will fall back {@code ActivityExecutionFailureRecord.builder()} invocations to its super {@link ActivityExecutionRecord#builder()},
-     * in which case {@link ActivityExecutionFailureRecordBuilder#failure(Failure)} is not visible to you,
+     * in which case {@link ActivityExecutionFailureRecordBuilder#failure(Failure)} will no longer be visible to you,
      * thus can no longer provision a {@link Failure}.
      * <br/>
      * This may just be how <a href="https://projectlombok.org/features/experimental/SuperBuilder">Lombok</a>'s @{@link SuperBuilder}
      * "undesirably" works.
      * @return no-args {@link ActivityExecutionFailureRecord#builder()}
      */
+    @SuppressWarnings("JavadocDeclaration")
     public static ActivityExecutionFailureRecordBuilder<?, ?> builder() {
         return new ActivityExecutionFailureRecordBuilderImpl();
     }

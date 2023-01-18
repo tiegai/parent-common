@@ -45,17 +45,23 @@ public class ActivityDispatchAspect {
     @SuppressWarnings("unchecked")
     @Around(value = "activityDispatch()")
     public ResponseEntity<ActivityExecutionRecord> aroundActivityDispatch(ProceedingJoinPoint pjp) {
+        // TODO reject an activity if needed, e.g. in case of system overload.
+
+        // TODO turn ON scale-in protection. Use AWS SDK as needed.
+            // mind the max 48-hour default effective period. Will need rollover strategy.
+
         final ActivityExecutionRecord.ActivityExecutionRecordBuilder<?, ?> recordBuilder =
                 ActivityExecutionRecord.builder()
-                        .beginTime(LocalDateTime.now()) // TODO timezone
-                        .ecsTaskArn("ARN") // TODO
-                        .privateIp("IP"); // TODO
+                        .beginTime(LocalDateTime.now()) // TODO timezone, ensure UTC everywhere, from code to DB
+                        // TODO add container ARN, too?
+                        .ecsTaskArn("ARN") // TODO retrieve from ECS container metadata
+                        .privateIp("IP"); // TODO retrieve from ECS container metadata
         ResponseEntity<ActivityExecutionStatusEnum> proceed;
         ActivityExecutionStatusEnum activityStatus;
 
         try {
             proceed = (ResponseEntity<ActivityExecutionStatusEnum>) Objects.requireNonNull(pjp.proceed());
-
+            // TODO more elegant and thorough checks
             activityStatus = proceed.getBody();
             if (null == activityStatus) {
                 throw new UnsupportedOperationException();
@@ -70,11 +76,13 @@ public class ActivityDispatchAspect {
             ).failure(
                     ActivityExecutionFailureRecord.Failure.builder()
                             .message(e.getMessage())
-                            .traceId(null) // TODO
+                            .traceId(null) // TODO distributed traceId, from wingtips?
                             .build()
             ).build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(failureRecord);
         }
+
+        // TODO turn OFF scale-in protection. Use AWS SDK as needed.
 
         return ResponseEntity // TODO copy all properties
                 .status(activityStatus == ACCEPTED ? HttpStatus.ACCEPTED : proceed.getStatusCode())
