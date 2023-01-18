@@ -1,5 +1,6 @@
 package com.nike.ncp.common.executor.service;
 
+import com.nike.ncp.common.executor.properties.CommonExecutorProperties;
 import com.nike.ncp.common.model.proxy.ActivityExecutionFailureRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord.ActivityExecutionRecordBuilder;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;
 
+import javax.annotation.Resource;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -33,10 +35,6 @@ public class ProxyFeedbackService {
      */
     @Value("${ncp.proxy.base.url}")
     private String proxyUrl;
-    @Value("${ncp.proxy.success.feedback.path}")
-    private String successFeedbackPath;
-    @Value("${ncp.proxy.failure.feedback.path}")
-    private String failureFeedbackPath;
     /**
      * The maximum number of retries. If uncertain, leave a dummy placeholder like below in your {@code application.properties}.
      * <pre class="code">
@@ -51,6 +49,9 @@ public class ProxyFeedbackService {
     private Long feedbackMaxRetries;
     @Value("${ncp.proxy.feedback.retry.interval:2}")
     private int feedbackRetryInterval;
+
+    @Resource
+    private CommonExecutorProperties properties;
 
     /**
      * Feed back a success to <a href="https://github.com/nike-gc-ncp/ncp-proxy">ncp-proxy</a>.
@@ -131,8 +132,11 @@ public class ProxyFeedbackService {
 
         return WebClient.create(proxyUrl)
                 .post()
-                .uri(uriBuilder -> uriBuilder.path(null == failure ? successFeedbackPath : failureFeedbackPath)
-                        .build(essentials.getJourneyInstanceId(), essentials.getActivityId())
+                .uri(uriBuilder -> uriBuilder.path(
+                    null == failure
+                        ? properties.getSuccessFeedbackPath()
+                        : properties.getFailureFeedbackPath())
+                    .build(essentials.getJourneyInstanceId(), essentials.getActivityId())
                 ).body(Mono.just(feedbackRequest), bodyClass)
                 // network exchange
                 .retrieve()
