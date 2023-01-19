@@ -8,7 +8,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 public class CriteriaAndWrapper extends CriteriaWrapper {
 
     public CriteriaAndWrapper() {
-        super(true);
+        super(true, null, null);
+    }
+
+    public CriteriaAndWrapper(Integer current, Integer size) {
+        super(true, current, size);
     }
 
     public CriteriaAndWrapper and(Criteria criteria) {

@@ -2,6 +2,7 @@ package com.nike.ncp.common.service;
 
 import com.nike.ncp.common.model.pagination.Page;
 import com.nike.ncp.common.model.pagination.PageResp;
+import com.nike.ncp.common.mongo.CriteriaWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,19 +24,18 @@ public class PageServiceTest {
     protected MongoTemplate mongoTemplate;
     @Mock
     private MongoConverter mongoConverter;
+
     private MongoService mongoService;
-    private PageQueryBuilder query;
 
     @Before
     public void setUp() {
-        query = PageQueryBuilder.page(1, 10);
-        mongoService = new MongoService(mongoConverter, mongoTemplate);
+        mongoService = new MongoServiceEngine(mongoConverter, mongoTemplate);
 
     }
 
     @Test(expected = RuntimeException.class)
     public void findPage() {
-        PageQueryBuilder query = mock(PageQueryBuilder.class);
+        CriteriaWrapper query = mock(CriteriaWrapper.class);
         Page page = mock(Page.class);
         when(mongoService.findPageByCursor(query,any(String.class),any(Class.class))).thenReturn(new PageResp());
     }

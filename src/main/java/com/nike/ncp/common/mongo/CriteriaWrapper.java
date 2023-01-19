@@ -3,6 +3,7 @@ package com.nike.ncp.common.mongo;
 import cn.hutool.core.util.StrUtil;
 import com.nike.ncp.common.mongo.reflection.ReflectionUtil;
 import com.nike.ncp.common.mongo.reflection.SerializableFunction;
+import lombok.Getter;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.ArrayList;
@@ -14,19 +15,21 @@ import java.util.regex.Pattern;
 /**
  * Query Builder Parent Class
  */
+@Getter
 public abstract class CriteriaWrapper {
+
+     private Integer current;
+     private Integer size;
      private boolean andLink = true;
 
      private Criteria criteria;
      private List<Criteria> list = new ArrayList<Criteria>();
 
-     public CriteriaWrapper(boolean andLink) {
+     protected CriteriaWrapper(boolean andLink, Integer current, Integer size) {
          this.andLink = andLink;
+         this.current = current;
+         this.size = size;
      }
-
-    public List<Criteria> getList() {
-        return list;
-    }
 
     /**
      * Convert Wrapper to Criteria
