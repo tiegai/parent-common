@@ -30,12 +30,6 @@ import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.FAILED;
 @Service
 public class ProxyFeedbackService {
     /**
-     * e.g. http(s)://internal-onencp-proxy-alb-428960147.cn-northwest-1.elb.amazonaws.com.cn <br/>
-     *      &emsp;&emsp;http(s)://proxy.onencp-test.gcncp.nikecloud.com.cn
-     */
-    @Value("${ncp.proxy.base.url}")
-    private String proxyUrl;
-    /**
      * The maximum number of retries. If uncertain, leave a dummy placeholder like below in your {@code application.properties}.
      * <pre class="code">
      * ncp.proxy.feedback.max.retries=
@@ -130,7 +124,7 @@ public class ProxyFeedbackService {
                 ? ActivityFailureFeedbackRequest.class
                 : ActivityFeedbackRequest.class;
 
-        return WebClient.create(proxyUrl)
+        return WebClient.create(properties.getProxyHostUrl())
                 .post()
                 .uri(uriBuilder -> uriBuilder.path(
                     null == failure

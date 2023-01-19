@@ -15,6 +15,12 @@ import org.springframework.context.annotation.PropertySource;
 }, ignoreResourceNotFound = true)
 @SuppressWarnings("SpringFacetCodeInspection")
 public class CommonExecutorProperties {
+    /**
+     * e.g. http(s)://internal-onencp-proxy-alb-428960147.cn-northwest-1.elb.amazonaws.com.cn <br/>
+     *      &emsp;&emsp;http(s)://proxy.onencp-test.gcncp.nikecloud.com.cn
+     */
+    @Value("${ncp.proxy.host.url}")
+    private String proxyHostUrl;
     @Value("${ncp.proxy.success.feedback.path}")
     private String successFeedbackPath;
     @Value("${ncp.proxy.failure.feedback.path}")
