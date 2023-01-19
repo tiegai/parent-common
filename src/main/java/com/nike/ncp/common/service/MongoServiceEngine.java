@@ -405,8 +405,8 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * and you can use it directly without secondary encapsulation.
      */
     public PageResp<T> findPage(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
-        Assert.notNull(criteriaWrapper.getCurrent(),"Current value must not be null and must be greater than 0.");
-        Assert.notNull(criteriaWrapper.getSize(),"Size value must not be null and must be greater than 0.");
+        Assert.notNull(criteriaWrapper.getCurrent(), "Current value must not be null and must be greater than 0.");
+        Assert.notNull(criteriaWrapper.getSize(), "Size value must not be null and must be greater than 0.");
         PageResp<T> pageResp = new PageResp<T>();
         Page pageResult = Page.builder().build();
         pageResult.setCurrent(criteriaWrapper.getCurrent());
@@ -485,8 +485,8 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @return PageResp<T>. Model data
      */
     public PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz) {
-        Assert.notNull(criteriaWrapper.getCurrent(),"Current value must not be null and must be greater than 0.");
-        Assert.notNull(criteriaWrapper.getSize(),"Size value must not be null and must be greater than 0.");
+        Assert.notNull(criteriaWrapper.getCurrent(), "Current value must not be null and must be greater than 0.");
+        Assert.notNull(criteriaWrapper.getSize(), "Size value must not be null and must be greater than 0.");
         PageResp<T> pageResp = new PageResp<>();
         Page pageResult = Page.builder().build();
         pageResult.setCurrent(criteriaWrapper.getCurrent());
