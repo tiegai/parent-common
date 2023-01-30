@@ -19,6 +19,7 @@ public class Journey {
     private int version;
     private String name;
     private String description;
+    private String scheduleType;
     private String periodicType;
     private Date periodicBegin;
     private Date periodicEnd;

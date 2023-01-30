@@ -2,6 +2,9 @@ package com.nike.ncp.common.model.journey;
 
 public enum JourneyEnum {
 
+    SCHEDULE_TYPE_ONCE("ONCE"),
+    SCHEDULE_TYPE_PERIODIC("PERIODIC"),
+
     PERIODIC_ONCE("ONCE"),
     PERIODIC_DAILY("DAILY"),
     PERIODIC_WEEKLY("WEEKLY"),
@@ -25,6 +28,7 @@ public enum JourneyEnum {
     VERSION("version"),
     NAME("name"),
     DESCRIPTION("description"),
+    SCHEDULE_TYPE("scheduleType"),
     PERIODIC_TYPE("periodicType"),
     PERIODIC_BEGIN("periodicBegin"),
     PERIODIC_END("periodicEnd"),
