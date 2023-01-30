@@ -14,6 +14,7 @@ public class TraitCondition {
     private String traitSource;
     private String traitType;
     private String traitId;
+    private String traitName;
     private String traitSymbol;
     private String traitValue;
 }

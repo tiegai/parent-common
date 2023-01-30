@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TraitBranch {
+    private String name;
     private boolean otherBranch;
     private String logicalJoiner;
     private List<TraitCondition> traitConditions;

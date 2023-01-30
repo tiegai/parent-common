@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RandomBranch {
+    private String name;
     private boolean otherBranch;
     private int numberOfAudience;
     private int weight;
