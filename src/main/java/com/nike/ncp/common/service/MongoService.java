@@ -56,8 +56,11 @@ public interface MongoService<T> {
     List<T> findAllByCursor(Class<T> clazz);
 
     PageResp<T> findPage(CriteriaWrapper criteriaWrapper, Class<T> clazz);
+    PageResp<T> findPage(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz);
 
     PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz);
+
+    PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId, Class<T> clazz);
 
 
 }

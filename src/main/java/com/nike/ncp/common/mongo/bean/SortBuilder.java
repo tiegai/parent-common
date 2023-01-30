@@ -32,6 +32,12 @@ public class SortBuilder {
         return this;
     }
 
+    public <E, R> SortBuilder add(String column, Direction direction) {
+        Order order = new Order(direction, column);
+        orderList.add(order);
+        return this;
+    }
+    
     public Sort toSort() {
         return Sort.by(orderList);
     }

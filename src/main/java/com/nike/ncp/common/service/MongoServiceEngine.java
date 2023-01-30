@@ -405,6 +405,12 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * and you can use it directly without secondary encapsulation.
      */
     public PageResp<T> findPage(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
+        return findPage(criteriaWrapper, null, clazz);
+    }
+
+
+    @Override
+    public PageResp<T> findPage(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
         Assert.notNull(criteriaWrapper.getCurrent(), "Current value must not be null and must be greater than 0.");
         Assert.notNull(criteriaWrapper.getSize(), "Size value must not be null and must be greater than 0.");
         PageResp<T> pageResp = new PageResp<T>();
@@ -413,7 +419,9 @@ public class MongoServiceEngine<T> implements MongoService<T> {
         pageResult.setSize(criteriaWrapper.getSize());
         Query query = new Query(criteriaWrapper.build());
         calculatePages(criteriaWrapper, query, pageResult, clazz);
-
+        if (sortBuilder != null) {
+            query.with(sortBuilder.toSort());
+        }
         query.skip((criteriaWrapper.getCurrent() - 1) * criteriaWrapper.getSize());
         query.limit(criteriaWrapper.getSize());
         List<T> list = mongoTemplate.find(query, clazz);
@@ -421,7 +429,6 @@ public class MongoServiceEngine<T> implements MongoService<T> {
         pageResp.setData(list);
         return pageResp;
     }
-
 
     /**
      * A cursor-based query that meets the conditions.
@@ -485,6 +492,11 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @return PageResp<T>. Model data
      */
     public PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz) {
+        return findPageByCursor(criteriaWrapper, null, lastId, clazz);
+    }
+
+    @Override
+    public PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId, Class<T> clazz) {
         Assert.notNull(criteriaWrapper.getCurrent(), "Current value must not be null and must be greater than 0.");
         Assert.notNull(criteriaWrapper.getSize(), "Size value must not be null and must be greater than 0.");
         PageResp<T> pageResp = new PageResp<>();
@@ -492,6 +504,9 @@ public class MongoServiceEngine<T> implements MongoService<T> {
         pageResult.setCurrent(criteriaWrapper.getCurrent());
         pageResult.setSize(criteriaWrapper.getSize());
         Query query = new Query(criteriaWrapper.build());
+        if (sortBuilder != null) {
+            query.with(sortBuilder.toSort());
+        }
         Document condition = query.getQueryObject();
         MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz));
         calculatePages(collection, criteriaWrapper, condition, pageResult);
