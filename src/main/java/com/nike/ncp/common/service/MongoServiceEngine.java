@@ -30,7 +30,6 @@ import org.springframework.data.mongodb.core.convert.UpdateMapper;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
@@ -280,7 +279,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
     }
 
     private void exclude(CriteriaWrapper criteriaWrapper, Query query) {
-        if (criteriaWrapper.getFields()!= null) {
+        if (criteriaWrapper.getFields() != null) {
             query.fields().exclude(criteriaWrapper.getFields());
         }
     }
