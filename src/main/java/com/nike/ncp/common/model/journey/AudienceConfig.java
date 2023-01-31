@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -12,4 +14,5 @@ import lombok.experimental.SuperBuilder;
 public class AudienceConfig {
     private long audienceId;
     private String audienceName;
+    private List<String> traitIds;
 }
