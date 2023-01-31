@@ -30,6 +30,7 @@ import org.springframework.data.mongodb.core.convert.UpdateMapper;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
@@ -272,9 +273,16 @@ public class MongoServiceEngine<T> implements MongoService<T> {
         Query query = new Query(criteriaWrapper.build());
         query.limit(1);
         query.with(sortBuilder.toSort());
+        exclude(criteriaWrapper, query);
         T t = (T) mongoTemplate.findOne(query, clazz);
         return t;
 
+    }
+
+    private void exclude(CriteriaWrapper criteriaWrapper, Query query) {
+        if (criteriaWrapper.getFields()!= null) {
+            query.fields().exclude(criteriaWrapper.getFields());
+        }
     }
 
 
@@ -311,6 +319,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
     public List<T> findListByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
         Query query = new Query(criteriaWrapper.build());
         query.with(sortBuilder.toSort());
+        exclude(criteriaWrapper, query);
         List<T> list = mongoTemplate.find(query, clazz);
         return list;
 
@@ -375,6 +384,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
     public Long findCountByQuery(CriteriaWrapper criteriaWrapper, Class<?> clazz) {
         Long count;
         Query query = new Query(criteriaWrapper.build());
+        exclude(criteriaWrapper, query);
         if (query.getQueryObject().isEmpty()) {
             count = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz)).estimatedDocumentCount();
         } else {
@@ -424,6 +434,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
         }
         query.skip((criteriaWrapper.getCurrent() - 1) * criteriaWrapper.getSize());
         query.limit(criteriaWrapper.getSize());
+        exclude(criteriaWrapper, query);
         List<T> list = mongoTemplate.find(query, clazz);
         pageResp.setPage(pageResult);
         pageResp.setData(list);
@@ -440,6 +451,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      */
     public List<T> findListByCursorWithCondition(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
         Query query = new Query(criteriaWrapper.build());
+        exclude(criteriaWrapper, query);
         Document condition = query.getQueryObject();
         MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz));
         FindIterable<Document> iterable = collection.find(condition);
@@ -504,6 +516,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
         pageResult.setCurrent(criteriaWrapper.getCurrent());
         pageResult.setSize(criteriaWrapper.getSize());
         Query query = new Query(criteriaWrapper.build());
+        exclude(criteriaWrapper, query);
         if (sortBuilder != null) {
             query.with(sortBuilder.toSort());
         }

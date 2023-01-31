@@ -5,6 +5,7 @@ import com.nike.ncp.common.mongo.reflection.ReflectionUtil;
 import com.nike.ncp.common.mongo.reflection.SerializableFunction;
 import lombok.Getter;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,8 @@ public abstract class CriteriaWrapper {
 
      private Criteria criteria;
      private List<Criteria> list = new ArrayList<Criteria>();
+
+     private String[] fields;
 
      protected CriteriaWrapper(boolean andLink, Integer current, Integer size) {
          this.andLink = andLink;
@@ -312,4 +315,18 @@ public abstract class CriteriaWrapper {
         list.add(Criteria.where(arr).elemMatch(Criteria.where(ReflectionUtil.getFieldName(column)).regex(pattern)));
         return this;
     }
+
+    /**
+     * If you don't want some fields to appear in the returned results, you can exclude them.
+     * @param columns
+     * @return
+     * @param <E>
+     * @param <R>
+     */
+    public <E, R> CriteriaWrapper exclude(String... columns) {
+        Assert.notNull(columns, "Keys must not be null!");
+        fields = columns;
+        return this;
+    }
+
 }
