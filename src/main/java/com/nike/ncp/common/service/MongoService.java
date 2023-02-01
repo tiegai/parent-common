@@ -8,15 +8,15 @@ import com.nike.ncp.common.mongo.bean.UpdateBuilder;
 import java.util.Collection;
 import java.util.List;
 
-public interface MongoService<T> {
+public interface MongoService {
 
     String insert(Object object);
 
     String insert(Object object, String collectionName);
 
-    void insertAll(List<T> list);
+    <T> void insertAll(List<T> list);
 
-    void batchInsert(List<T> list, Class<T> clazz);
+    <T> void batchInsert(List<T> list, Class<T> clazz);
 
     void updateById(Object object);
 
@@ -30,36 +30,36 @@ public interface MongoService<T> {
 
     void deleteByQuery(CriteriaWrapper criteriaWrapper, Class<?> clazz);
 
-    T findOneByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz);
+    <T> T findOneByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz);
 
-    T findOneByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz);
+    <T> T findOneByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz);
 
-    List<T> findListByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz);
+    <T> List<T> findListByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz);
 
-    List<T> findListByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz);
+    <T> List<T> findListByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz);
 
-    List<T> findListByIds(Collection<String> ids, Class<T> clazz);
+    <T> List<T> findListByIds(Collection<String> ids, Class<T> clazz);
 
-    List<T> findListByIds(Collection<String> ids, SortBuilder sortBuilder, Class<T> clazz);
+    <T> List<T> findListByIds(Collection<String> ids, SortBuilder sortBuilder, Class<T> clazz);
 
-    List<T> findAll(Class<T> clazz);
+    <T> List<T> findAll(Class<T> clazz);
 
-    List<T> findAll(SortBuilder sortBuilder, Class<T> clazz);
+    <T> List<T> findAll(SortBuilder sortBuilder, Class<T> clazz);
 
     Long findCountByQuery(CriteriaWrapper criteriaWrapper, Class<?> clazz);
 
     Long findAllCount(Class<?> clazz);
 
-    List<T> findListByCursorWithCondition(CriteriaWrapper criteriaWrapper, Class<T> clazz);
+    <T> List<T> findListByCursorWithCondition(CriteriaWrapper criteriaWrapper, Class<T> clazz);
 
-    List<T> findAllByCursor(Class<T> clazz);
+    <T> List<T> findAllByCursor(Class<T> clazz);
 
-    PageResp<T> findPage(CriteriaWrapper criteriaWrapper, Class<T> clazz);
-    PageResp<T> findPage(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz);
+    <T> PageResp<T> findPage(CriteriaWrapper criteriaWrapper, Class<T> clazz);
+    <T> PageResp<T> findPage(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz);
 
-    PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz);
+    <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz);
 
-    PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId, Class<T> clazz);
+    <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId, Class<T> clazz);
 
 
 }

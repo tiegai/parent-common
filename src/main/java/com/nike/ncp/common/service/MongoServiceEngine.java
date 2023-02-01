@@ -42,7 +42,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class MongoServiceEngine<T> implements MongoService<T> {
+public class MongoServiceEngine implements MongoService {
 
     private final MongoConverter mongoConverter;
     private QueryMapper queryMapper;
@@ -120,13 +120,13 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param list
      */
     @Override
-    public void insertAll(List<T> list) {
+    public <T> void insertAll(List<T> list) {
         construction(list);
         mongoTemplate.insertAll(list);
     }
 
     @Override
-    public void batchInsert(List<T> list, Class<T> clazz) {
+    public <T> void batchInsert(List<T> list, Class<T> clazz) {
         BulkOperations ops = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, clazz);
         list.forEach(t -> {
             ops.insert(t);
@@ -250,7 +250,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param clazz
      * @return T
      */
-    public T findOneByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
+    public <T> T findOneByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
         SortBuilder sortBuilder = new SortBuilder(Constant::getId, Sort.Direction.DESC);
         return (T) findOneByQuery(criteriaWrapper, sortBuilder, clazz);
     }
@@ -263,7 +263,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param clazz
      * @return
      */
-    public T findOneByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
+    public <T> T findOneByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
 
         Query query = new Query(criteriaWrapper.build());
         query.limit(1);
@@ -292,7 +292,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param clazz
      * @return
      */
-    public List<T> findListByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
+    public <T> List<T> findListByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
         SortBuilder sortBuilder = new SortBuilder().add(Constant::getId, Sort.Direction.DESC);
         return findListByQuery(criteriaWrapper, sortBuilder, clazz);
 
@@ -311,7 +311,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param clazz
      * @return
      */
-    public List<T> findListByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
+    public <T> List<T> findListByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
         Query query = new Query(criteriaWrapper.build());
         query.with(sortBuilder.toSort());
         exclude(criteriaWrapper, query);
@@ -327,7 +327,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param clazz Document object
      * @return
      */
-    public List<T> findListByIds(Collection<String> ids, Class<T> clazz) {
+    public <T> List<T> findListByIds(Collection<String> ids, Class<T> clazz) {
         CriteriaWrapper criteriaAndWrapper = new CriteriaAndWrapper().in(Constant::getId, ids);
         return findListByQuery(criteriaAndWrapper, clazz);
     }
@@ -340,7 +340,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param clazz       Document object class
      * @return
      */
-    public List<T> findListByIds(Collection<String> ids, SortBuilder sortBuilder, Class<T> clazz) {
+    public <T> List<T> findListByIds(Collection<String> ids, SortBuilder sortBuilder, Class<T> clazz) {
         CriteriaWrapper criteriaAndWrapper = new CriteriaAndWrapper().in(Constant::getId, ids);
         return findListByQuery(criteriaAndWrapper, sortBuilder, clazz);
     }
@@ -352,7 +352,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param clazz Document object class
      * @return
      */
-    public List<T> findAll(Class<T> clazz) {
+    public <T> List<T> findAll(Class<T> clazz) {
         SortBuilder sortBuilder = new SortBuilder(Constant::getId, Sort.Direction.DESC);
         return findListByQuery(new CriteriaAndWrapper(), sortBuilder, clazz);
     }
@@ -365,7 +365,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param clazz
      * @return
      */
-    public List<T> findAll(SortBuilder sortBuilder, Class<T> clazz) {
+    public <T> List<T> findAll(SortBuilder sortBuilder, Class<T> clazz) {
         return findListByQuery(new CriteriaAndWrapper(), sortBuilder, clazz);
     }
 
@@ -409,13 +409,13 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @return PageResp, the returned response data model, has already processed all the data you need,
      * and you can use it directly without secondary encapsulation.
      */
-    public PageResp<T> findPage(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
+    public <T> PageResp<T> findPage(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
         return findPage(criteriaWrapper, null, clazz);
     }
 
 
     @Override
-    public PageResp<T> findPage(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
+    public <T> PageResp<T> findPage(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
         Assert.notNull(criteriaWrapper.getCurrent(), "Current value must not be null and must be greater than 0.");
         Assert.notNull(criteriaWrapper.getSize(), "Size value must not be null and must be greater than 0.");
         PageResp<T> pageResp = new PageResp<T>();
@@ -444,7 +444,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @return </> PageResp, the returned response data model, has already processed all the data you need,
      * and you can use it directly without secondary encapsulation.
      */
-    public List<T> findListByCursorWithCondition(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
+    public <T> List<T> findListByCursorWithCondition(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
         Query query = new Query(criteriaWrapper.build());
         exclude(criteriaWrapper, query);
         Document condition = query.getQueryObject();
@@ -478,7 +478,7 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param clazz Document object
      * @return
      */
-    public List<T> findAllByCursor(Class<T> clazz) {
+    public <T> List<T> findAllByCursor(Class<T> clazz) {
         MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz));
         FindIterable<Document> iterable = collection.find();
         if (Objects.nonNull(iterable)) {
@@ -498,12 +498,12 @@ public class MongoServiceEngine<T> implements MongoService<T> {
      * @param clazz           Document object
      * @return PageResp<T>. Model data
      */
-    public PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz) {
+    public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz) {
         return findPageByCursor(criteriaWrapper, null, lastId, clazz);
     }
 
     @Override
-    public PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId, Class<T> clazz) {
+    public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId, Class<T> clazz) {
         Assert.notNull(criteriaWrapper.getCurrent(), "Current value must not be null and must be greater than 0.");
         Assert.notNull(criteriaWrapper.getSize(), "Size value must not be null and must be greater than 0.");
         PageResp<T> pageResp = new PageResp<>();

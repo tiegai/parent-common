@@ -1,5 +1,6 @@
 package com.nike.ncp.common.aspect;
 
+import com.nike.ncp.common.configuration.Constant;
 import com.nike.ncp.common.model.AuditLogEvent;
 import com.nike.ncp.common.model.auditlog.AuditLog;
 import com.nike.ncp.common.model.auditlog.SysAuditLog;
@@ -41,13 +42,13 @@ public class AuditLogAspect {
         sysAuditLog.setAppName(appName);
         sysAuditLog.setOperType(auditLog.operType().name());
         sysAuditLog.setDescription(auditLog.description());
-        sysAuditLog.setOperUser("SYSTEM");
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
         if (Objects.nonNull(attributes)) {
             ServletRequestAttributes requestAttributes = (ServletRequestAttributes) attributes;
             HttpServletRequest request = requestAttributes.getRequest();
             sysAuditLog.setAction(request.getMethod());
             sysAuditLog.setOperUrl(request.getRequestURI());
+            sysAuditLog.setOperUser(request.getHeader(Constant.USER_EMAIL));
         }
         applicationEventPublisher.publishEvent(new AuditLogEvent(this, sysAuditLog));
         log.info("event=record_audit_log, The annotation @AuditLog record log to succeeded");
