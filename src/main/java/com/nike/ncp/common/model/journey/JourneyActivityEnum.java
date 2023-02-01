@@ -2,17 +2,17 @@ package com.nike.ncp.common.model.journey;
 
 public enum JourneyActivityEnum {
 
-    CATEGORY_START("START"),
-    CATEGORY_END("END"),
-    CATEGORY_AUDIENCE("AUDIENCE"),
-    CATEGORY_TRAIT_CHOICE("TRAIT_CHOICE"),
-    CATEGORY_RANDOM_CHOICE("RANDOM_CHOICE"),
-    CATEGORY_SMS("SMS"),
-    CATEGORY_PUSH("PUSH"),
-    CATEGORY_EMAIL("EMAIL"),
-    CATEGORY_INBOX("INBOX"),
-    CATEGORY_TAG("TAG"),
-    CATEGORY_WAIT("WAIT");
+    CATEGORY_START(ActivityCategoryEnum.START.value()),
+    CATEGORY_END(ActivityCategoryEnum.END.value()),
+    CATEGORY_AUDIENCE(ActivityCategoryEnum.AUDIENCE.value()),
+    CATEGORY_TRAIT_CHOICE(ActivityCategoryEnum.TRAIT_CHOICE.value()),
+    CATEGORY_RANDOM_CHOICE(ActivityCategoryEnum.RANDOM_CHOICE.value()),
+    CATEGORY_SMS(ActivityCategoryEnum.SMS.value()),
+    CATEGORY_PUSH(ActivityCategoryEnum.PUSH.value()),
+    CATEGORY_EMAIL(ActivityCategoryEnum.EMAIL.value()),
+    CATEGORY_INBOX(ActivityCategoryEnum.INBOX.value()),
+    CATEGORY_TAG(ActivityCategoryEnum.TAG.value()),
+    CATEGORY_WAIT(ActivityCategoryEnum.WAIT.value());
 
     private String name;
 
