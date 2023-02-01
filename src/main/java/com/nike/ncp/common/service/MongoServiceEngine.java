@@ -190,16 +190,6 @@ public class MongoServiceEngine<T> implements MongoService<T> {
         mongoTemplate.updateMulti(new Query(criteriaWrapper.build()), updateBuilder.toUpdate(), clazz);
     }
 
-    @Override
-    public void batchUpdate(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder,
-                            List<T> list, Class<T> clazz) {
-        BulkOperations ops = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, clazz);
-        list.forEach(t -> {
-            ops.updateOne(new Query(criteriaWrapper.build()), updateBuilder.toUpdate());
-        });
-        ops.execute();
-    }
-
     /**
      * Delete by id
      *

@@ -22,9 +22,6 @@ public interface MongoService<T> {
 
     void updateMulti(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, Class<?> clazz);
 
-    void batchUpdate(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder,
-                     List<T> list, Class<T> clazz);
-
     void deleteById(String id, Class<?> clazz);
 
     void deleteByIds(List<String> ids, Class<?> clazz);
