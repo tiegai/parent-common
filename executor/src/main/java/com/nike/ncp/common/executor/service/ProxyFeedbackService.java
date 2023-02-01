@@ -36,8 +36,10 @@ public class ProxyFeedbackService {
      * </pre>
      * Default is {@link Long#MAX_VALUE}, which emulates indefinite retries.
      * <p/>
-     * When calling {@link ProxyFeedbackService#success} or {@link ProxyFeedbackService#failure}, in case of retry exhaustion,
-     * it is also highly recommended to provision your own handler other than {@link ProxyFeedbackService#getDefaultRetryExhaustionHandler()}.
+     * In case of retry exhaustion, instead of the {@link ProxyFeedbackService#success} or {@link ProxyFeedbackService#failure} "shortcuts",
+     * it is <b>HIGHLY RECOMMENDED</b> to use {@link ProxyFeedbackService#success(ActivityFeedbackEssentials, BiFunction)}
+     * or {@link ProxyFeedbackService#failure(ActivityFeedbackEssentials, Throwable, BiFunction)} to supply your own handler
+     * other than {@link ProxyFeedbackService#getDefaultRetryExhaustionHandler()}.
      */
     @Value("${ncp.proxy.feedback.max.retries}")
     private Long feedbackMaxRetries;

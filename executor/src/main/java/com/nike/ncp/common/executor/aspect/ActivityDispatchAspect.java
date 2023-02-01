@@ -16,10 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.ACCEPTED;
+import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.DONE;
 import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.FAILED;
+import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.REJECTED;
 
 @Slf4j
 @Aspect
@@ -83,6 +86,10 @@ public class ActivityDispatchAspect {
         }
 
         // TODO turn OFF scale-in protection. Use AWS SDK as needed.
+
+        if (Arrays.asList(REJECTED, FAILED, DONE).contains(activityStatus)) {
+            recordBuilder.endTime(LocalDateTime.now());
+        }
 
         return ResponseEntity // TODO copy all properties
                 .status(activityStatus == ACCEPTED ? HttpStatus.ACCEPTED : proceed.getStatusCode())
