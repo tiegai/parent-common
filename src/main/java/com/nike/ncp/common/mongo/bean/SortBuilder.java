@@ -37,7 +37,7 @@ public class SortBuilder {
         orderList.add(order);
         return this;
     }
-    
+
     public Sort toSort() {
         return Sort.by(orderList);
     }

@@ -107,6 +107,12 @@ public class MongoServiceEngine<T> implements MongoService<T> {
         return (String) ReflectUtil.getFieldValue(object, Constant.ID);
     }
 
+    @Override
+    public String insert(Object object, String collectionName) {
+        ReflectUtil.setFieldValue(object, Constant.ID, null);
+        insertOrUpdate(object, collectionName);
+        return (String) ReflectUtil.getFieldValue(object, Constant.ID);
+    }
 
     /**
      * batch insert

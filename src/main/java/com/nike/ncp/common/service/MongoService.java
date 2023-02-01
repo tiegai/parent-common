@@ -12,6 +12,8 @@ public interface MongoService<T> {
 
     String insert(Object object);
 
+    String insert(Object object, String collectionName);
+
     void insertAll(List<T> list);
 
     void batchInsert(List<T> list, Class<T> clazz);
