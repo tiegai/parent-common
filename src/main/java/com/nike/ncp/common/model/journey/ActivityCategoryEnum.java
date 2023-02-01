@@ -7,6 +7,7 @@ public enum ActivityCategoryEnum {
     AUDIENCE("AUDIENCE"),
     TRAIT_CHOICE("TRAIT_CHOICE"),
     RANDOM_CHOICE("RANDOM_CHOICE"),
+    FREQ_CTRL("FREQ_CTRL"),
     SMS("SMS"),
     PUSH("PUSH"),
     EMAIL("EMAIL"),
@@ -14,7 +15,7 @@ public enum ActivityCategoryEnum {
     TAG("TAG"),
     WAIT("WAIT");
 
-    private String name;
+    private final String name;
 
     ActivityCategoryEnum(String name) {
         this.name = name;
