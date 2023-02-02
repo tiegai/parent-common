@@ -112,35 +112,6 @@ public class JourneyService {
     private final JourneyRepository journeyRepository;
     private final MongoTemplate mongoTemplate;
 ```
-List entities with optional page, size and sorting
-```
-public JourneyList getJourneyList(int page, int size, String sort, String order,
-                                      String campaignId, String subCampaignId, String name,
-                                      String status, Date nextStartTimeBegin, Date nextStartTimeEnd,
-                                      UserHeader user)
-PageQueryBuilder query = PageQueryBuilder.of(page, size).sort(sort, order).exclude("excludedColumnName")
-                .eq(CAMPAIGN_ID, campaignId)
-                .eq(SUB_CAMPAIGN_ID, subCampaignId)
-                .eq(STATUS, status)
-                .like(NAME, name)
-                .gte(NEXT_START_TIME, nextStartTimeBegin)
-                .lte(NEXT_START_TIME, nextStartTimeEnd);
-long total = mongoTemplate.count(query.getCountQuery(), Journey.class);
-List<Journey> journeys = mongoTemplate.find(query.getQuery(), Journey.class);
-JourneyList journeyList = JourneyList.builder()
-        .page(Page.builder().size(size).total(total).current(page).build())
-        .data(journeys).build();
-```
-List all entities
-```
-List<Journey> list = mongoTemplate.find(PageQueryBuilder.all().getQuery(), Journey.class);
-
-```
-List entities with specified table name
-```
-List<YourEntity> list = mongoTemplate.find(PageQueryBuilder.all().getQuery(), "your_table_name");
-
-```
 Get an entity
 ```
 Optional<Journey> journey = journeyRepository.findById(journeyId);
