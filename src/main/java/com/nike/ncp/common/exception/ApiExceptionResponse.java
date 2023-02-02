@@ -15,6 +15,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiExceptionResponse {
 
+    private String appName;
     @Builder.Default
     private String errorId = UUID.randomUUID().toString();
     private List<ApiErrorMessage> errors;
