@@ -297,12 +297,12 @@ public abstract class CriteriaWrapper {
      * @param param  value
      * @return
      */
-    public <E, R> CriteriaWrapper findArray(String arrName, SerializableFunction<E, R> column, String param) {
+    public <E, R> CriteriaWrapper findArray(String arrName, SerializableFunction<E, R> column, Object param) {
         list.add(Criteria.where(arrName).elemMatch(Criteria.where(ReflectionUtil.getFieldName(column)).is(param)));
         return this;
     }
 
-    public <E, R> CriteriaWrapper findArray(String arrName, String column, String param) {
+    public <E, R> CriteriaWrapper findArray(String arrName, String column, Object param) {
         list.add(Criteria.where(arrName).elemMatch(Criteria.where(column).is(param)));
         return this;
     }
