@@ -429,7 +429,7 @@ public class MongoServiceEngine implements MongoService {
         Query query = new Query(criteriaWrapper.build());
         calculatePages(criteriaWrapper, query, pageResult, clazz);
         if (sortBuilder != null) {
-            query.with(sortBuilder.toSort()).collation(ignoreCaseCollation());
+            query.with(sortBuilder.toSort());
         }
         query.skip((criteriaWrapper.getCurrent() - 1) * criteriaWrapper.getSize());
         query.limit(criteriaWrapper.getSize());
@@ -517,7 +517,7 @@ public class MongoServiceEngine implements MongoService {
         Query query = new Query(criteriaWrapper.build());
         exclude(criteriaWrapper, query);
         if (sortBuilder != null) {
-            query.with(sortBuilder.toSort()).collation(ignoreCaseCollation());
+            query.with(sortBuilder.toSort());
         }
         Document condition = query.getQueryObject();
         MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz));
