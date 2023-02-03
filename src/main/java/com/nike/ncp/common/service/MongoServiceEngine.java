@@ -27,6 +27,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.convert.QueryMapper;
 import org.springframework.data.mongodb.core.convert.UpdateMapper;
+import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -413,6 +414,9 @@ public class MongoServiceEngine implements MongoService {
         return findPage(criteriaWrapper, null, clazz);
     }
 
+    private Collation ignoreCaseCollation() {
+        return Collation.of("en");
+    }
 
     @Override
     public <T> PageResp<T> findPage(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
@@ -425,7 +429,7 @@ public class MongoServiceEngine implements MongoService {
         Query query = new Query(criteriaWrapper.build());
         calculatePages(criteriaWrapper, query, pageResult, clazz);
         if (sortBuilder != null) {
-            query.with(sortBuilder.toSort());
+            query.with(sortBuilder.toSort()).collation(ignoreCaseCollation());
         }
         query.skip((criteriaWrapper.getCurrent() - 1) * criteriaWrapper.getSize());
         query.limit(criteriaWrapper.getSize());
@@ -513,7 +517,7 @@ public class MongoServiceEngine implements MongoService {
         Query query = new Query(criteriaWrapper.build());
         exclude(criteriaWrapper, query);
         if (sortBuilder != null) {
-            query.with(sortBuilder.toSort());
+            query.with(sortBuilder.toSort()).collation(ignoreCaseCollation());
         }
         Document condition = query.getQueryObject();
         MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz));

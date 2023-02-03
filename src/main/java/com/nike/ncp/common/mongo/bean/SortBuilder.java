@@ -22,18 +22,18 @@ public class SortBuilder {
     }
 
     public <E, R> SortBuilder(SerializableFunction<E, R> column, Direction direction) {
-        Order order = new Order(direction, ReflectionUtil.getFieldName(column)).ignoreCase();
+        Order order = new Order(direction, ReflectionUtil.getFieldName(column));
         orderList.add(order);
     }
 
     public <E, R> SortBuilder add(SerializableFunction<E, R> column, Direction direction) {
-        Order order = new Order(direction, ReflectionUtil.getFieldName(column)).ignoreCase();
+        Order order = new Order(direction, ReflectionUtil.getFieldName(column));
         orderList.add(order);
         return this;
     }
 
     public <E, R> SortBuilder add(String column, Direction direction) {
-        Order order = new Order(direction, column).ignoreCase();
+        Order order = new Order(direction, column);
         orderList.add(order);
         return this;
     }
