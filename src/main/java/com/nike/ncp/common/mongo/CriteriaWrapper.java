@@ -292,30 +292,42 @@ public abstract class CriteriaWrapper {
     /**
      * collection query
      *
-     * @param arr    collection name
+     * @param arrName    collection name
      * @param column collection field name
      * @param param  value
      * @return
      */
-    public <E, R> CriteriaWrapper findArray(String arr, SerializableFunction<E, R> column, String param) {
-        list.add(Criteria.where(arr).elemMatch(Criteria.where(ReflectionUtil.getFieldName(column)).is(param)));
+    public <E, R> CriteriaWrapper findArray(String arrName, SerializableFunction<E, R> column, String param) {
+        list.add(Criteria.where(arrName).elemMatch(Criteria.where(ReflectionUtil.getFieldName(column)).is(param)));
         return this;
     }
+
+    public <E, R> CriteriaWrapper findArray(String arrName, String column, String param) {
+        list.add(Criteria.where(arrName).elemMatch(Criteria.where(column).is(param)));
+        return this;
+    }
+
 
     /**
      * fuzzy collection query
      *
-     * @param arr    collection name
+     * @param arrName    collection name
      * @param column collection field name
      * @param param  value
      * @return
      */
-    public <E, R> CriteriaWrapper findArrayLike(String arr, SerializableFunction<E, R> column, String param) {
+    public <E, R> CriteriaWrapper findArrayLike(String arrName, SerializableFunction<E, R> column, String param) {
         Pattern pattern = Pattern.compile("^.*" + replaceRegExp(param) + ".*$", Pattern.CASE_INSENSITIVE);
-        list.add(Criteria.where(arr).elemMatch(Criteria.where(ReflectionUtil.getFieldName(column)).regex(pattern)));
+        list.add(Criteria.where(arrName).elemMatch(Criteria.where(ReflectionUtil.getFieldName(column)).regex(pattern)));
         return this;
     }
 
+
+    public <E, R> CriteriaWrapper findArrayLike(String arrName, String column, String param) {
+        Pattern pattern = Pattern.compile("^.*" + replaceRegExp(param) + ".*$", Pattern.CASE_INSENSITIVE);
+        list.add(Criteria.where(arrName).elemMatch(Criteria.where(column).regex(pattern)));
+        return this;
+    }
     /**
      * If you don't want some fields to appear in the returned results, you can exclude them.
      * @param columns

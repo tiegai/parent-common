@@ -55,6 +55,7 @@ public enum JourneyEnum {
     EXECUTION_STATUS("executionStatus"),
     PURPOSE("purpose"),
     TAGS("tags"),
+    SEND_CHANNEL("sendChannel"),
     JOURNEY_ACTIVITIES("journeyActivities");
 
     private String name;
