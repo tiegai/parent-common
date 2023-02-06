@@ -134,20 +134,21 @@ public class ProxyFeedbackService {
                 .retrieve()
                 .toBodilessEntity()
                 // success/error handling
-                .doOnSuccess(r -> log.info("isComplete=true, status={}, method={}, feedback={}",
-                        r.getStatusCode(),
-                        essentials.getClass().getEnclosingMethod().getName(),
-                        feedbackRequest)
-                ).doOnError(r -> log.error("isComplete=false reason={}, method={}, feedback={}",
-                        r.getMessage(),
-                        essentials.getClass().getEnclosingMethod().getName(),
-                        feedbackRequest)
+                .doOnSuccess(r -> log.info("{} succeeded, status={} feedback={}",
+                        bodyClass.getName(), r.getStatusCode(), feedbackRequest)
+                ).doOnError(r -> log.error("{} failed, reason={} feedback={}",
+                        bodyClass.getName(), r.getMessage(), feedbackRequest)
                 ).onErrorResume(Mono::error)
                 // retry strategy
-                .retryWhen(getDefaultRetrySpec(essentials, feedbackRequest, retryExhaustionHandler));
+                .retryWhen(getDefaultRetrySpec(feedbackRequest, retryExhaustionHandler))
+                // https://stackoverflow.com/a/59286752
+                .cache();
     }
 
-    private static ActivityFeedbackRequestBuilder<?, ?> getFeedbackRequestBuilder(ActivityFeedbackEssentials essentials, ActivityExecutionRecordBuilder<?, ?> executionRecordBuilder) {
+    private static ActivityFeedbackRequestBuilder<?, ?> getFeedbackRequestBuilder(
+            ActivityFeedbackEssentials essentials,
+            ActivityExecutionRecordBuilder<?, ?> executionRecordBuilder
+    ) {
         return ActivityFeedbackRequest.builder()
                 .journeyInstanceId(essentials.getJourneyInstanceId())
                 .journeyDefinitionId(essentials.getJourneyDefinitionId())
@@ -167,7 +168,6 @@ public class ProxyFeedbackService {
     }
 
     private RetryBackoffSpec getDefaultRetrySpec(
-            ActivityFeedbackEssentials essentials,
             ActivityFeedbackRequest feedbackRequest,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
@@ -175,10 +175,10 @@ public class ProxyFeedbackService {
                         Objects.requireNonNullElse(feedbackMaxRetries, Long.MAX_VALUE),
                         Duration.ofSeconds(feedbackRetryInterval)
                 ).jitter(0.5d)
-                .doBeforeRetry(s -> log.warn("Retrying({}/{}), reason={}, method={}, feedback={}",
+                .doBeforeRetry(s -> log.warn("Retrying({}/{}) {}, reason={}, feedback={}",
                         s.totalRetries() + 1, feedbackMaxRetries,
+                        feedbackRequest.getClass().getName(),
                         s.failure().getMessage(),
-                        essentials.getClass().getEnclosingMethod().getName(),
                         feedbackRequest)
                 ).onRetryExhaustedThrow(Objects.requireNonNullElse(
                         retryExhaustionHandler,
