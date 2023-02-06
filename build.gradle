@@ -59,7 +59,6 @@ allprojects {
     }
     
     configurations {
-        compile.exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
         compile.exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
     }
     
@@ -121,10 +120,7 @@ ext {
     awsSdk1Version = '1.12.383'
     awsSdk2Version = '2.19.15'
     spindleVersion = '7.0.1.54'
-    springBootVersion = '2.3.12.RELEASE'
-    springBeansVersion = '5.3.22'
-    springAopVersion = '2.7.3'
-    springBootTomcatVersion = '9.0.65'
+    springBootVersion = '2.7.8'
     tracingCoreVersion = '1.0.11'
     nikeInternalUtilVersion = '0.9.0.1'
     lombokVersion = '1.18.24'
@@ -141,10 +137,6 @@ ext {
     mockitoVersion = '2.22.0'
     restAssuredVersion = '3.0.3'
     junitQuickCheckVersion = '1.0'
-
-    jedisVersionn = '4.3.1'
-    redisVersion = '2.7.6'
-
 }
 
 group = groupId
@@ -157,46 +149,46 @@ ext['log4j2.version'] = '2.17.1'
 
 dependencies {
     // you no longer have to specify versions when declaring spring-boot dependencies
-    // find a list of available spring-boot modules at https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies/2.3.12.RELEASE
-    api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+    // find a list of available spring-boot modules at https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies/2.7.8
+    api(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
     // find a list of available AWS v1 modules at https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-bom/1.12.383
-    api platform("com.amazonaws:aws-java-sdk-bom:${awsSdk1Version}")
+    api(enforcedPlatform("com.amazonaws:aws-java-sdk-bom:${awsSdk1Version}"))
     // find a list of available AWS v2 modules at https://mvnrepository.com/artifact/software.amazon.awssdk/bom/2.19.15
-    api platform("software.amazon.awssdk:bom:${awsSdk2Version}")
+    api(enforcedPlatform("software.amazon.awssdk:bom:${awsSdk2Version}"))
     // learn more about the differences between AWS v1 and v2 at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/migration-whats-different.html
     
-    compile("org.springframework.boot:spring-boot-starter-data-mongodb:2.7.6")
-    compile("javax.annotation:javax.annotation-api:1.2")
-    compile("com.fasterxml.jackson.core:jackson-core:2.13.3")
-    compile("com.fasterxml.jackson.core:jackson-databind:2.13.3")
-    compile("org.apache.commons:commons-lang3:3.12.0")
-    compile("cn.hutool:hutool-all:5.8.10")
-    compile("org.springframework:spring-beans:${springBeansVersion}")
-    compile("org.springframework:spring-context:${springBeansVersion}")
-    compile("org.springframework:spring-web:${springBeansVersion}")
-    compile("org.springframework:spring-webmvc:${springBeansVersion}")
-    compile("org.springframework:spring-core:${springBeansVersion}")
-    compile("org.springframework.boot:spring-boot-starter-aop:${springAopVersion}")
-    compile("org.apache.tomcat.embed:tomcat-embed-core:${springBootTomcatVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("javax.annotation:javax.annotation-api")
+    implementation("com.fasterxml.jackson.core:jackson-core")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("org.apache.commons:commons-lang3")
+    implementation("cn.hutool:hutool-all:5.8.10")
+    implementation("org.springframework:spring-beans")
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework:spring-web")
+    implementation("org.springframework:spring-webmvc")
+    implementation("org.springframework:spring-core")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+    implementation("org.apache.tomcat.embed:tomcat-embed-core")
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
     //redis
-    compile("redis.clients:jedis:${jedisVersionn}")
-    compile("org.springframework.boot:spring-boot-starter-data-redis:${redisVersion}")
-    compile("io.netty:netty-all:4.1.84.Final")
+    implementation("redis.clients:jedis")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("io.netty:netty-all")
     // Swagger UI
-    compile("io.springfox:springfox-swagger2:2.10.5")
-    compile("io.springfox:springfox-swagger-ui:2.10.5")
-    compile("com.github.xiaoymin:knife4j-openapi2-spring-boot-starter:4.0.0")
+    implementation("io.springfox:springfox-swagger2:2.10.5")
+    implementation("io.springfox:springfox-swagger-ui:2.10.5")
+    implementation("com.github.xiaoymin:knife4j-openapi2-spring-boot-starter:4.0.0")
     // Wingtips
     implementation("com.nike.wingtips:wingtips-spring-boot:${wingtipsVersion}") {
         exclude group: 'org.springframework', module: 'spring-web'
         exclude group: 'org.springframework.boot', module: 'spring-boot-autoconfigure'
     }
     // Test dependencies
-    testCompile("junit:junit:${junitVersion}")
-    testCompile("org.mockito:mockito-core:${mockitoVersion}")
-    testCompile("org.mockito:mockito-inline:3.12.4")
+    testImplementation("junit:junit")
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-inline")
     testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
     testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 }

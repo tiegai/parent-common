@@ -2,17 +2,16 @@ group = 'com.nike.gc.ncp.common'
 version = releaseVersion
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
-    api platform("com.amazonaws:aws-java-sdk-bom:${awsSdk1Version}")
-    api platform("software.amazon.awssdk:bom:${awsSdk2Version}")
-    
-    api rootProject
-    api project(":model")
+    implementation(rootProject)
+    implementation(project(":model"))
     
     // Spring
-    api "org.springframework.boot:spring-boot-starter-webflux"
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
     // AWS
     implementation("software.amazon.awssdk:ecs")
+    
+    implementation("org.mongodb:bson")
     
     implementation("com.nike.wingtips:wingtips-java8:${wingtipsVersion}")
     

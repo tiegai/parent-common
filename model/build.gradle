@@ -7,6 +7,7 @@ dependencies {
 	implementation rootProject
 	implementation("org.mongodb:bson")
 	implementation("com.fasterxml.jackson.core:jackson-databind")
+	implementation("org.springframework:spring-web")
 	
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
