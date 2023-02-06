@@ -102,23 +102,19 @@ public class ProxyFeedbackService {
 
     private Mono<ResponseEntity<Void>> feedBack(
             ActivityFeedbackEssentials essentials,
-            Throwable failure,
+            Throwable throwable,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
         ActivityExecutionRecordBuilder<?, ?> executionRecordBuilder = getExecutionRecordBuilder();
         ActivityFeedbackRequestBuilder<?, ?> requestBuilder = getFeedbackRequestBuilder(essentials, executionRecordBuilder);
 
-        if (null != failure) { // this is not a success but a failure feedback
-            executionRecordBuilder = ActivityExecutionFailureRecord.builder(executionRecordBuilder.build())
-                    .status(FAILED)
-                    .failure(ActivityExecutionFailureRecord.Failure.builder()
-                            .message(failure.getMessage())
-                            .traceId(null) // TODO distributed traceId, from wingtips?
-                            .build()
-                    );
+        if (null != throwable) { // this is not a success but a failure feedback
+            final ActivityExecutionFailureRecord.Failure failure = ActivityExecutionFailureRecord.Failure.builder()
+                    .message(throwable.getMessage())
+                    .traceId(null) // TODO distributed traceId, from wingtips?
+                    .build();
 
-            requestBuilder = ActivityFailureFeedbackRequest.builder(requestBuilder.build())
-                    .executionRecord((ActivityExecutionFailureRecord) executionRecordBuilder.build());
+            requestBuilder = ActivityFailureFeedbackRequest.builder(requestBuilder.build(), FAILED, failure);
         }
 
         final ActivityFeedbackRequest feedbackRequest = requestBuilder.build();
@@ -129,7 +125,7 @@ public class ProxyFeedbackService {
         return WebClient.create(properties.getProxyHostUrl())
                 .post()
                 .uri(uriBuilder -> uriBuilder.path(
-                    null == failure
+                    null == throwable
                         ? properties.getSuccessFeedbackPath()
                         : properties.getFailureFeedbackPath())
                     .build(essentials.getJourneyInstanceId(), essentials.getActivityId())
