@@ -8,6 +8,7 @@ import com.nike.ncp.common.model.proxy.ActivityFailureFeedbackRequest;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackEssentials;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackRequest;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackRequest.ActivityFeedbackRequestBuilder;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class ProxyFeedbackService {
      * @return Bodiless {@link Mono}&#60;{@link ResponseEntity}&#62;
      */
     @SuppressWarnings("unused")
-    public Mono<ResponseEntity<Void>> success(ActivityFeedbackEssentials essentials) {
+    public Mono<ResponseEntity<Void>> success(@NonNull ActivityFeedbackEssentials essentials) {
         return this.success(essentials, null);
     }
 
@@ -66,7 +67,10 @@ public class ProxyFeedbackService {
      * @return Bodiless {@link Mono}&#60;{@link ResponseEntity}&#62;
      */
     @SuppressWarnings("unused")
-    public Mono<ResponseEntity<Void>> failure(ActivityFeedbackEssentials essentials, Throwable failure) {
+    public Mono<ResponseEntity<Void>> failure(
+            @NonNull ActivityFeedbackEssentials essentials,
+            @NonNull Throwable failure
+    ) {
         return this.failure(essentials, failure, null);
     }
 
@@ -78,7 +82,7 @@ public class ProxyFeedbackService {
      * @return Bodiless {@link Mono}&#60;{@link ResponseEntity}&#62;
      */
     public Mono<ResponseEntity<Void>> success(
-            ActivityFeedbackEssentials essentials,
+            @NonNull ActivityFeedbackEssentials essentials,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
         return this.feedBack(essentials, null, retryExhaustionHandler);
@@ -93,15 +97,15 @@ public class ProxyFeedbackService {
      * @return Bodiless {@link Mono}&#60;{@link ResponseEntity}&#62;
      */
     public Mono<ResponseEntity<Void>> failure(
-            ActivityFeedbackEssentials essentials,
-            Throwable failure,
+            @NonNull ActivityFeedbackEssentials essentials,
+            @NonNull Throwable failure,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
         return this.feedBack(essentials, failure, retryExhaustionHandler);
     }
 
     private Mono<ResponseEntity<Void>> feedBack(
-            ActivityFeedbackEssentials essentials,
+            @NonNull ActivityFeedbackEssentials essentials,
             Throwable throwable,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
@@ -146,8 +150,8 @@ public class ProxyFeedbackService {
     }
 
     private static ActivityFeedbackRequestBuilder<?, ?> getFeedbackRequestBuilder(
-            ActivityFeedbackEssentials essentials,
-            ActivityExecutionRecordBuilder<?, ?> executionRecordBuilder
+            @NonNull ActivityFeedbackEssentials essentials,
+            @NonNull ActivityExecutionRecordBuilder<?, ?> executionRecordBuilder
     ) {
         return ActivityFeedbackRequest.builder()
                 .journeyInstanceId(essentials.getJourneyInstanceId())
@@ -158,7 +162,6 @@ public class ProxyFeedbackService {
     }
 
     private static ActivityExecutionRecordBuilder<?, ?> getExecutionRecordBuilder() {
-
         return ActivityExecutionRecord.builder()
                 .endTime(LocalDateTime.now()) // TODO timezone, ensure UTC everywhere, from code to DB
                 // TODO add container ARN, too?
@@ -168,7 +171,7 @@ public class ProxyFeedbackService {
     }
 
     private RetryBackoffSpec getDefaultRetrySpec(
-            ActivityFeedbackRequest feedbackRequest,
+            @NonNull ActivityFeedbackRequest feedbackRequest,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
         return Retry.backoff(
