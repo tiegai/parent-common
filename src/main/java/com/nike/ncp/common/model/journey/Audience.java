@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class Audience {
@@ -15,18 +16,12 @@ public class Audience {
     private String phone;
     private String email;
     private List<Trait> traits;
-    private List<FreqCtrlRes> freqCtrlRes;
+    private Map<String, String> freqCtrlRes;
 
     @Data
     public static class Trait {
         private String traitId;
         private String traitName;
-        private String value;
-    }
-
-    @Data
-    public static class FreqCtrlRes {
-        private String tag;
         private String value;
     }
 }
