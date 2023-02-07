@@ -6,7 +6,7 @@ String teamName = 'GC-NCP'
 
 def config = [
     buildFlow: [
-        PULL_REQUEST : ['Build', 'Quality Gate', 'Scan' ],
+        PULL_REQUEST : ['Build', /* 'Quality Gate', */ 'Scan' ],
         BUILD_JAR : ['Build', 'Quality Gate', 'Scan' ],
         PUBLISH_JAR : ['Build', 'Publish'],
     ],
