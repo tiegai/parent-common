@@ -27,6 +27,7 @@ public enum JourneyEnum {
     ID("id"),
     VERSION("version"),
     NAME("name"),
+    NAME_LOWER_CASE("nameLowerCase"),
     DESCRIPTION("description"),
     SCHEDULE_TYPE("scheduleType"),
     PERIODIC_TYPE("periodicType"),
@@ -54,6 +55,8 @@ public enum JourneyEnum {
     STATUS("status"),
     EXECUTION_STATUS("executionStatus"),
     PURPOSE("purpose"),
+    CAMPAIGN("campaign"),
+    FREQ_CONTROL("freqControl"),
     TAGS("tags"),
     SEND_CHANNEL("sendChannel"),
     JOURNEY_ACTIVITIES("journeyActivities");
