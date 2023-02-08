@@ -103,9 +103,7 @@ public class MongoServiceEngine implements MongoService {
      * @param object
      */
     public String insert(Object object) {
-        ReflectUtil.setFieldValue(object, Constant.ID, null);
-        insertOrUpdate(object, null);
-        return (String) ReflectUtil.getFieldValue(object, Constant.ID);
+        return insert(object, null);
     }
 
     @Override
@@ -168,10 +166,24 @@ public class MongoServiceEngine implements MongoService {
      * @param object
      */
     public void updateById(Object object) {
+        updateDraw(object, null);
+    }
+
+    private void updateDraw(Object object, String collectionName) {
         String id = (String) ReflectUtil.getFieldValue(object, Constant.ID);
         Assert.hasLength(id, "Id must not be empty.");
         Assert.notNull(findById((String) ReflectUtil.getFieldValue(object, Constant.ID), object.getClass()));
-        insertOrUpdate(object, null);
+        insertOrUpdate(object, collectionName);
+    }
+
+
+    /**
+     * update by id
+     *
+     * @param object
+     */
+    public void updateById(Object object, String collectionName) {
+        updateDraw(object, collectionName);
     }
 
     /**
@@ -187,6 +199,18 @@ public class MongoServiceEngine implements MongoService {
     }
 
     /**
+     * Update the first item found.
+     *
+     * @param criteriaWrapper
+     * @param updateBuilder
+     * @param collectionName
+     */
+    public void updateFirst(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, String collectionName) {
+        Query query = new Query(criteriaWrapper.build());
+        mongoTemplate.updateFirst(query, updateBuilder.toUpdate(), collectionName);
+    }
+
+    /**
      * Update all items found.
      *
      * @param criteriaWrapper
@@ -198,6 +222,17 @@ public class MongoServiceEngine implements MongoService {
     }
 
     /**
+     * Update all items found.
+     *
+     * @param criteriaWrapper
+     * @param updateBuilder
+     * @param collectionName
+     */
+    public void updateMulti(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, String collectionName) {
+        mongoTemplate.updateMulti(new Query(criteriaWrapper.build()), updateBuilder.toUpdate(), collectionName);
+    }
+
+    /**
      * Delete by id
      *
      * @param id
@@ -205,7 +240,18 @@ public class MongoServiceEngine implements MongoService {
      */
     public void deleteById(String id, Class<?> clazz) {
         Assert.hasLength(id, "Id must not be empty.");
-        deleteByQuery(new CriteriaAndWrapper().eq(Constant::getId, id), clazz);
+        deleteDocument(new CriteriaAndWrapper().eq(Constant::getId, id), clazz, null);
+    }
+
+    /**
+     * Delete by id
+     *
+     * @param id
+     * @param collectionName
+     */
+    public void deleteById(String id, String collectionName) {
+        Assert.hasLength(id, "Id must not be empty.");
+        deleteDocument(new CriteriaAndWrapper().eq(Constant::getId, id), null, collectionName);
     }
 
     /**
@@ -216,7 +262,18 @@ public class MongoServiceEngine implements MongoService {
      */
     public void deleteByIds(List<String> ids, Class<?> clazz) {
         Assert.notEmpty(ids, "collection must not be empty");
-        deleteByQuery(new CriteriaAndWrapper().in(Constant::getId, ids), clazz);
+        deleteDocument(new CriteriaAndWrapper().in(Constant::getId, ids), clazz, null);
+    }
+
+    /**
+     * batch delete by id
+     *
+     * @param ids
+     * @param collectionName
+     */
+    public void deleteByIds(List<String> ids, String collectionName) {
+        Assert.notEmpty(ids, "collection must not be empty");
+        deleteDocument(new CriteriaAndWrapper().in(Constant::getId, ids), null, collectionName);
     }
 
     /**
@@ -226,8 +283,26 @@ public class MongoServiceEngine implements MongoService {
      * @param clazz
      */
     public void deleteByQuery(CriteriaWrapper criteriaWrapper, Class<?> clazz) {
+        deleteDocument(criteriaWrapper, clazz, null);
+    }
+
+    /**
+     * Delete according to conditions
+     *
+     * @param criteriaWrapper
+     * @param collectionName
+     */
+    public void deleteByQuery(CriteriaWrapper criteriaWrapper, String collectionName) {
+        deleteDocument(criteriaWrapper, null, collectionName);
+    }
+
+    private void deleteDocument(CriteriaWrapper criteriaWrapper, Class<?> clazz, String collectionName) {
         Query query = new Query(criteriaWrapper.build());
-        mongoTemplate.remove(query, clazz);
+        if (StringUtils.isNotEmpty(collectionName)) {
+            mongoTemplate.remove(query, collectionName);
+        } else {
+            mongoTemplate.remove(query, clazz);
+        }
     }
 
 
@@ -240,8 +315,20 @@ public class MongoServiceEngine implements MongoService {
      */
     public <T> T findById(String id, Class<T> clazz) {
         Assert.hasLength(id, "Id must not be empty");
-        T t = (T) mongoTemplate.findById(id, clazz);
-        return t;
+        return mongoTemplate.findById(id, clazz);
+    }
+
+    /**
+     * query by id
+     *
+     * @param id             id
+     * @param clazz
+     * @param collectionName
+     * @return T
+     */
+    public <T> T findById(String id, Class<T> clazz, String collectionName) {
+        Assert.hasLength(id, "Id must not be empty");
+        return mongoTemplate.findById(id, clazz, collectionName);
     }
 
     /**
@@ -253,7 +340,20 @@ public class MongoServiceEngine implements MongoService {
      */
     public <T> T findOneByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
         SortBuilder sortBuilder = new SortBuilder(Constant::getId, Sort.Direction.DESC);
-        return (T) findOneByQuery(criteriaWrapper, sortBuilder, clazz);
+        return findOne(criteriaWrapper, sortBuilder, clazz, null);
+    }
+
+    /**
+     * Find a single by criteria.
+     *
+     * @param criteriaWrapper
+     * @param clazz
+     * @param collectionName
+     * @return T
+     */
+    public <T> T findOneByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz, String collectionName) {
+        SortBuilder sortBuilder = new SortBuilder(Constant::getId, Sort.Direction.DESC);
+        return findOne(criteriaWrapper, sortBuilder, clazz, collectionName);
     }
 
     /**
@@ -265,14 +365,24 @@ public class MongoServiceEngine implements MongoService {
      * @return
      */
     public <T> T findOneByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
+        return findOne(criteriaWrapper, sortBuilder, clazz, null);
+    }
 
+    public <T> T findOneByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz,
+                                String collectionName) {
+        return findOne(criteriaWrapper, sortBuilder, clazz, collectionName);
+    }
+
+    private <T> T findOne(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz,
+                          String collectionName) {
         Query query = new Query(criteriaWrapper.build());
         query.limit(1);
         query.with(sortBuilder.toSort());
         exclude(criteriaWrapper, query);
-        T t = (T) mongoTemplate.findOne(query, clazz);
-        return t;
-
+        if (StringUtils.isNotEmpty(collectionName)) {
+            return mongoTemplate.findOne(query, clazz, collectionName);
+        }
+        return mongoTemplate.findOne(query, clazz);
     }
 
     private void exclude(CriteriaWrapper criteriaWrapper, Query query) {
@@ -299,6 +409,12 @@ public class MongoServiceEngine implements MongoService {
 
     }
 
+    public <T> List<T> findListByQuery(CriteriaWrapper criteriaWrapper, Class<T> clazz, String collectionName) {
+        SortBuilder sortBuilder = new SortBuilder().add(Constant::getId, Sort.Direction.DESC);
+        return findList(criteriaWrapper, sortBuilder, clazz, collectionName);
+
+    }
+
     /**
      * The query conditions are constructed by the condition constructor, and the sorting rules are constructed
      * by the sorting constructor, and the set data of the query is returned.
@@ -313,12 +429,23 @@ public class MongoServiceEngine implements MongoService {
      * @return
      */
     public <T> List<T> findListByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
+        return findList(criteriaWrapper, sortBuilder, clazz, null);
+    }
+
+    public <T> List<T> findListByQuery(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz,
+                                       String collectionName) {
+        return findList(criteriaWrapper, sortBuilder, clazz, collectionName);
+    }
+
+    private <T> List<T> findList(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz,
+                                 String collectionName) {
         Query query = new Query(criteriaWrapper.build());
         query.with(sortBuilder.toSort());
         exclude(criteriaWrapper, query);
-        List<T> list = mongoTemplate.find(query, clazz);
-        return list;
-
+        if (StringUtils.isNotEmpty(collectionName)) {
+            return mongoTemplate.find(query, clazz, collectionName);
+        }
+        return mongoTemplate.find(query, clazz);
     }
 
     /**
@@ -333,6 +460,11 @@ public class MongoServiceEngine implements MongoService {
         return findListByQuery(criteriaAndWrapper, clazz);
     }
 
+    public <T> List<T> findListByIds(Collection<String> ids, Class<T> clazz, String collectionName) {
+        CriteriaWrapper criteriaAndWrapper = new CriteriaAndWrapper().in(Constant::getId, ids);
+        return findListByQuery(criteriaAndWrapper, clazz, collectionName);
+    }
+
     /**
      * Query data by id collection,and set the sorting rules as required
      *
@@ -343,7 +475,13 @@ public class MongoServiceEngine implements MongoService {
      */
     public <T> List<T> findListByIds(Collection<String> ids, SortBuilder sortBuilder, Class<T> clazz) {
         CriteriaWrapper criteriaAndWrapper = new CriteriaAndWrapper().in(Constant::getId, ids);
-        return findListByQuery(criteriaAndWrapper, sortBuilder, clazz);
+        return findList(criteriaAndWrapper, sortBuilder, clazz, null);
+    }
+
+    public <T> List<T> findListByIds(Collection<String> ids, SortBuilder sortBuilder, Class<T> clazz,
+                                     String collectionName) {
+        CriteriaWrapper criteriaAndWrapper = new CriteriaAndWrapper().in(Constant::getId, ids);
+        return findList(criteriaAndWrapper, sortBuilder, clazz, collectionName);
     }
 
 
@@ -378,15 +516,26 @@ public class MongoServiceEngine implements MongoService {
      * @return
      */
     public Long findCountByQuery(CriteriaWrapper criteriaWrapper, Class<?> clazz) {
+        return findCount(criteriaWrapper, clazz, null);
+    }
+
+    public Long findCountByQuery(CriteriaWrapper criteriaWrapper, String collectionName) {
+        return findCount(criteriaWrapper, null, collectionName);
+    }
+
+    private Long findCount(CriteriaWrapper criteriaWrapper, Class<?> clazz, String collectionName) {
         Long count;
         Query query = new Query(criteriaWrapper.build());
         exclude(criteriaWrapper, query);
+        if (StringUtils.isNotEmpty(collectionName)) {
+            count = mongoTemplate.count(query, collectionName);
+            return count;
+        }
         if (query.getQueryObject().isEmpty()) {
             count = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz)).estimatedDocumentCount();
         } else {
             count = mongoTemplate.count(query, clazz);
         }
-
         return count;
     }
 
@@ -400,6 +549,10 @@ public class MongoServiceEngine implements MongoService {
         return findCountByQuery(new CriteriaAndWrapper(), clazz);
     }
 
+    public Long findAllCount(String collectionName) {
+        return findCount(new CriteriaAndWrapper(), null, collectionName);
+    }
+
 
     /**
      * If you want to make paging query by skip, please call this method, but its performance is not as high as
@@ -411,7 +564,11 @@ public class MongoServiceEngine implements MongoService {
      * and you can use it directly without secondary encapsulation.
      */
     public <T> PageResp<T> findPage(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
-        return findPage(criteriaWrapper, null, clazz);
+        return getPageResp(criteriaWrapper, null, clazz, null);
+    }
+
+    public <T> PageResp<T> findPage(CriteriaWrapper criteriaWrapper, Class<T> clazz, String collectionName) {
+        return getPageResp(criteriaWrapper, null, clazz, collectionName);
     }
 
     private Collation ignoreCaseCollation() {
@@ -420,6 +577,17 @@ public class MongoServiceEngine implements MongoService {
 
     @Override
     public <T> PageResp<T> findPage(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz) {
+        return getPageResp(criteriaWrapper, sortBuilder, clazz, null);
+    }
+
+    @Override
+    public <T> PageResp<T> findPage(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz,
+                                    String collectionName) {
+        return getPageResp(criteriaWrapper, sortBuilder, clazz, collectionName);
+    }
+
+    private <T> PageResp<T> getPageResp(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, Class<T> clazz,
+                                        String collectionName) {
         Assert.notNull(criteriaWrapper.getCurrent(), "Current value must not be null and must be greater than 0.");
         Assert.notNull(criteriaWrapper.getSize(), "Size value must not be null and must be greater than 0.");
         PageResp<T> pageResp = new PageResp<T>();
@@ -427,14 +595,19 @@ public class MongoServiceEngine implements MongoService {
         pageResult.setCurrent(criteriaWrapper.getCurrent());
         pageResult.setSize(criteriaWrapper.getSize());
         Query query = new Query(criteriaWrapper.build());
-        calculatePages(criteriaWrapper, query, pageResult, clazz);
+        calculatePages(criteriaWrapper, pageResult, clazz, collectionName);
         if (sortBuilder != null) {
             query.with(sortBuilder.toSort());
         }
         query.skip((criteriaWrapper.getCurrent() - 1) * criteriaWrapper.getSize());
         query.limit(criteriaWrapper.getSize());
         exclude(criteriaWrapper, query);
-        List<T> list = mongoTemplate.find(query, clazz);
+        List<T> list;
+        if (StringUtils.isNotEmpty(collectionName)) {
+            list = mongoTemplate.find(query, clazz, collectionName);
+        } else {
+            list = mongoTemplate.find(query, clazz);
+        }
         pageResp.setPage(pageResult);
         pageResp.setData(list);
         return pageResp;
@@ -449,16 +622,31 @@ public class MongoServiceEngine implements MongoService {
      * and you can use it directly without secondary encapsulation.
      */
     public <T> List<T> findListByCursorWithCondition(CriteriaWrapper criteriaWrapper, Class<T> clazz) {
+        return findCursor(criteriaWrapper, clazz, null);
+    }
+
+    public <T> List<T> findListByCursorWithCondition(CriteriaWrapper criteriaWrapper, Class<T> clazz,
+                                                     String collectionName) {
+        return findCursor(criteriaWrapper, clazz, collectionName);
+    }
+
+    private <T> List<T> findCursor(CriteriaWrapper criteriaWrapper, Class<T> clazz, String collectionName) {
         Query query = new Query(criteriaWrapper.build());
         exclude(criteriaWrapper, query);
         Document condition = query.getQueryObject();
-        MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz));
+        MongoCollection<Document> collection;
+        if (StringUtils.isNotEmpty(collectionName)) {
+            collection = mongoTemplate.getCollection(collectionName);
+        } else {
+            collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz));
+        }
         FindIterable<Document> iterable = collection.find(condition);
         if (Objects.nonNull(iterable)) {
             return getTs(clazz, iterable);
         }
         return new ArrayList<T>();
     }
+
 
     private <T> List<T> getTs(Class<T> clazz, FindIterable<Document> iterable) {
         List<T> list = new ArrayList<>();
@@ -503,11 +691,21 @@ public class MongoServiceEngine implements MongoService {
      * @return PageResp<T>. Model data
      */
     public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz) {
-        return findPageByCursor(criteriaWrapper, null, lastId, clazz);
+        return getPageRespByCursor(criteriaWrapper, null, lastId, clazz, null);
+    }
+
+    public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz,
+                                            String collectionName) {
+        return getPageRespByCursor(criteriaWrapper, null, lastId, clazz, collectionName);
     }
 
     @Override
     public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId, Class<T> clazz) {
+        return getPageRespByCursor(criteriaWrapper, sortBuilder, lastId, clazz, null);
+    }
+
+    private <T> PageResp<T> getPageRespByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder,
+                                                String lastId, Class<T> clazz, String collectionName) {
         Assert.notNull(criteriaWrapper.getCurrent(), "Current value must not be null and must be greater than 0.");
         Assert.notNull(criteriaWrapper.getSize(), "Size value must not be null and must be greater than 0.");
         PageResp<T> pageResp = new PageResp<>();
@@ -520,7 +718,12 @@ public class MongoServiceEngine implements MongoService {
             query.with(sortBuilder.toSort());
         }
         Document condition = query.getQueryObject();
-        MongoCollection<Document> collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz));
+        MongoCollection<Document> collection;
+        if (StringUtils.isNotEmpty(collectionName)) {
+            collection = mongoTemplate.getCollection(collectionName);
+        } else {
+            collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz));
+        }
         calculatePages(collection, criteriaWrapper, condition, pageResult);
         FindIterable iterable;
         if (StringUtils.isNotBlank(lastId)) {
@@ -572,13 +775,9 @@ public class MongoServiceEngine implements MongoService {
     }
 
 
-    private void calculatePages(CriteriaWrapper criteriaWrapper, Query query, Page pageResult, Class<?> clazz) {
-        Long count;
-        if (query.getQueryObject().isEmpty()) {
-            count = mongoTemplate.getCollection(mongoTemplate.getCollectionName(clazz)).estimatedDocumentCount();
-        } else {
-            count = mongoTemplate.count(query, clazz);
-        }
+    private void calculatePages(CriteriaWrapper criteriaWrapper, Page pageResult, Class<?> clazz,
+                                String collectionName) {
+        Long count = findCount(criteriaWrapper, clazz, collectionName);
         if (count > 0) {
             Integer size = criteriaWrapper.getSize();
             if (count % size == 0) {
