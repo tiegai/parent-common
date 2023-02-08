@@ -690,10 +690,11 @@ public class MongoServiceEngine implements MongoService {
      * @param clazz           Document object
      * @return PageResp<T>. Model data
      */
+    @Override
     public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz) {
         return getPageRespByCursor(criteriaWrapper, null, lastId, clazz, null);
     }
-
+    @Override
     public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz,
                                             String collectionName) {
         return getPageRespByCursor(criteriaWrapper, null, lastId, clazz, collectionName);
@@ -702,6 +703,12 @@ public class MongoServiceEngine implements MongoService {
     @Override
     public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId, Class<T> clazz) {
         return getPageRespByCursor(criteriaWrapper, sortBuilder, lastId, clazz, null);
+    }
+
+    @Override
+    public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId,
+                                            Class<T> clazz, String collectionName) {
+        return getPageRespByCursor(criteriaWrapper, sortBuilder, lastId, clazz, collectionName);
     }
 
     private <T> PageResp<T> getPageRespByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder,
