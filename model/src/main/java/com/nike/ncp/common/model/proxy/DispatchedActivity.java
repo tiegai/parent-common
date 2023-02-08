@@ -1,6 +1,8 @@
 package com.nike.ncp.common.model.proxy;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nike.ncp.common.model.journey.ActivityCategoryEnum;
+import com.nike.ncp.common.model.util.ObjectIdSerializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -35,11 +37,16 @@ public class DispatchedActivity<ACTIVITY_CONFIG> {
     @RequiredArgsConstructor
     public static class Journey {
         @NonNull
+        @JsonSerialize(using = ObjectIdSerializer.class)
         private ObjectId instanceId;
+        @JsonSerialize(using = ObjectIdSerializer.class)
         private ObjectId definitionId;
         private Integer version;
+        @JsonSerialize(using = ObjectIdSerializer.class)
         private ObjectId programId;
+        @JsonSerialize(using = ObjectIdSerializer.class)
         private ObjectId campaignId;
+        @JsonSerialize(using = ObjectIdSerializer.class)
         private ObjectId subCampaignId;
     }
 
@@ -49,8 +56,11 @@ public class DispatchedActivity<ACTIVITY_CONFIG> {
     @RequiredArgsConstructor
     public static class Activity<ACTIVITY_CONFIG> {
         @NonNull
+        @JsonSerialize(using = ObjectIdSerializer.class)
         private ObjectId id;
+        @JsonSerialize(using = ObjectIdSerializer.class)
         private ObjectId parentActivityId;
+        @JsonSerialize(using = ObjectIdSerializer.class)
         private ObjectId nextActivityId;
         private Integer activityIndex;
         @NonNull
