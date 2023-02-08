@@ -8,6 +8,7 @@ import com.nike.ncp.common.model.proxy.ActivityFailureFeedbackRequest;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackEssentials;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackRequest;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackRequest.ActivityFeedbackRequestBuilder;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class ProxyFeedbackService {
      * @return Bodiless {@link Mono}&#60;{@link ResponseEntity}&#62;
      */
     @SuppressWarnings("unused")
-    public Mono<ResponseEntity<Void>> success(ActivityFeedbackEssentials essentials) {
+    public Mono<ResponseEntity<Void>> success(@NonNull ActivityFeedbackEssentials essentials) {
         return this.success(essentials, null);
     }
 
@@ -66,7 +67,10 @@ public class ProxyFeedbackService {
      * @return Bodiless {@link Mono}&#60;{@link ResponseEntity}&#62;
      */
     @SuppressWarnings("unused")
-    public Mono<ResponseEntity<Void>> failure(ActivityFeedbackEssentials essentials, Throwable failure) {
+    public Mono<ResponseEntity<Void>> failure(
+            @NonNull ActivityFeedbackEssentials essentials,
+            @NonNull Throwable failure
+    ) {
         return this.failure(essentials, failure, null);
     }
 
@@ -78,7 +82,7 @@ public class ProxyFeedbackService {
      * @return Bodiless {@link Mono}&#60;{@link ResponseEntity}&#62;
      */
     public Mono<ResponseEntity<Void>> success(
-            ActivityFeedbackEssentials essentials,
+            @NonNull ActivityFeedbackEssentials essentials,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
         return this.feedBack(essentials, null, retryExhaustionHandler);
@@ -93,32 +97,28 @@ public class ProxyFeedbackService {
      * @return Bodiless {@link Mono}&#60;{@link ResponseEntity}&#62;
      */
     public Mono<ResponseEntity<Void>> failure(
-            ActivityFeedbackEssentials essentials,
-            Throwable failure,
+            @NonNull ActivityFeedbackEssentials essentials,
+            @NonNull Throwable failure,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
         return this.feedBack(essentials, failure, retryExhaustionHandler);
     }
 
     private Mono<ResponseEntity<Void>> feedBack(
-            ActivityFeedbackEssentials essentials,
-            Throwable failure,
+            @NonNull ActivityFeedbackEssentials essentials,
+            Throwable throwable,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
         ActivityExecutionRecordBuilder<?, ?> executionRecordBuilder = getExecutionRecordBuilder();
         ActivityFeedbackRequestBuilder<?, ?> requestBuilder = getFeedbackRequestBuilder(essentials, executionRecordBuilder);
 
-        if (null != failure) { // this is not a success but a failure feedback
-            executionRecordBuilder = ActivityExecutionFailureRecord.builder(executionRecordBuilder.build())
-                    .status(FAILED)
-                    .failure(ActivityExecutionFailureRecord.Failure.builder()
-                            .message(failure.getMessage())
-                            .traceId(null) // TODO distributed traceId, from wingtips?
-                            .build()
-                    );
+        if (null != throwable) { // this is not a success but a failure feedback
+            final ActivityExecutionFailureRecord.Failure failure = ActivityExecutionFailureRecord.Failure.builder()
+                    .message(throwable.getMessage())
+                    .traceId(null) // TODO distributed traceId, from wingtips?
+                    .build();
 
-            requestBuilder = ActivityFailureFeedbackRequest.builder(requestBuilder.build())
-                    .executionRecord((ActivityExecutionFailureRecord) executionRecordBuilder.build());
+            requestBuilder = ActivityFailureFeedbackRequest.builder(requestBuilder.build(), FAILED, failure);
         }
 
         final ActivityFeedbackRequest feedbackRequest = requestBuilder.build();
@@ -129,7 +129,7 @@ public class ProxyFeedbackService {
         return WebClient.create(properties.getProxyHostUrl())
                 .post()
                 .uri(uriBuilder -> uriBuilder.path(
-                    null == failure
+                    null == throwable
                         ? properties.getSuccessFeedbackPath()
                         : properties.getFailureFeedbackPath())
                     .build(essentials.getJourneyInstanceId(), essentials.getActivityId())
@@ -138,20 +138,21 @@ public class ProxyFeedbackService {
                 .retrieve()
                 .toBodilessEntity()
                 // success/error handling
-                .doOnSuccess(r -> log.info("isComplete=true, status={}, method={}, feedback={}",
-                        r.getStatusCode(),
-                        essentials.getClass().getEnclosingMethod().getName(),
-                        feedbackRequest)
-                ).doOnError(r -> log.error("isComplete=false reason={}, method={}, feedback={}",
-                        r.getMessage(),
-                        essentials.getClass().getEnclosingMethod().getName(),
-                        feedbackRequest)
+                .doOnSuccess(r -> log.info("{} succeeded, status={} feedback={}",
+                        bodyClass.getName(), r.getStatusCode(), feedbackRequest)
+                ).doOnError(r -> log.error("{} failed, reason={} feedback={}",
+                        bodyClass.getName(), r.getMessage(), feedbackRequest)
                 ).onErrorResume(Mono::error)
                 // retry strategy
-                .retryWhen(getDefaultRetrySpec(essentials, feedbackRequest, retryExhaustionHandler));
+                .retryWhen(getDefaultRetrySpec(feedbackRequest, retryExhaustionHandler))
+                // https://stackoverflow.com/a/59286752
+                .cache();
     }
 
-    private static ActivityFeedbackRequestBuilder<?, ?> getFeedbackRequestBuilder(ActivityFeedbackEssentials essentials, ActivityExecutionRecordBuilder<?, ?> executionRecordBuilder) {
+    private static ActivityFeedbackRequestBuilder<?, ?> getFeedbackRequestBuilder(
+            @NonNull ActivityFeedbackEssentials essentials,
+            @NonNull ActivityExecutionRecordBuilder<?, ?> executionRecordBuilder
+    ) {
         return ActivityFeedbackRequest.builder()
                 .journeyInstanceId(essentials.getJourneyInstanceId())
                 .journeyDefinitionId(essentials.getJourneyDefinitionId())
@@ -161,7 +162,6 @@ public class ProxyFeedbackService {
     }
 
     private static ActivityExecutionRecordBuilder<?, ?> getExecutionRecordBuilder() {
-
         return ActivityExecutionRecord.builder()
                 .endTime(LocalDateTime.now()) // TODO timezone, ensure UTC everywhere, from code to DB
                 // TODO add container ARN, too?
@@ -171,18 +171,17 @@ public class ProxyFeedbackService {
     }
 
     private RetryBackoffSpec getDefaultRetrySpec(
-            ActivityFeedbackEssentials essentials,
-            ActivityFeedbackRequest feedbackRequest,
+            @NonNull ActivityFeedbackRequest feedbackRequest,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
         return Retry.backoff(
                         Objects.requireNonNullElse(feedbackMaxRetries, Long.MAX_VALUE),
                         Duration.ofSeconds(feedbackRetryInterval)
                 ).jitter(0.5d)
-                .doBeforeRetry(s -> log.warn("Retrying({}/{}), reason={}, method={}, feedback={}",
+                .doBeforeRetry(s -> log.warn("Retrying({}/{}) {}, reason={}, feedback={}",
                         s.totalRetries() + 1, feedbackMaxRetries,
+                        feedbackRequest.getClass().getName(),
                         s.failure().getMessage(),
-                        essentials.getClass().getEnclosingMethod().getName(),
                         feedbackRequest)
                 ).onRetryExhaustedThrow(Objects.requireNonNullElse(
                         retryExhaustionHandler,

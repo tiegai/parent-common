@@ -18,6 +18,7 @@ public class Journey {
     private String id;
     private int version;
     private String name;
+    private String nameLowerCase;
     private String description;
     private String scheduleType;
     private String periodicType;
@@ -46,6 +47,7 @@ public class Journey {
     private String executionStatus;
     private String purpose;
     private SendChannel sendChannel;
+    private String campaign;
     private boolean freqControl;
     private List<String> tags;
     private List<JourneyActivity> journeyActivities;

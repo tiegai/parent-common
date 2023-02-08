@@ -1,15 +1,35 @@
 package com.nike.ncp.common.model.proxy;
 
+import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Sample {@link ActivityFailureFeedbackRequest} in JSON representation.
+ * <pre class="code">
+ * {
+ *     "journeyInstanceId": "63998f7c958e0e77f20ed8ee",
+ *     "activityId": "63998f7c958e0e77f20ed8ee",
+ *     "activityCategory": "FREQ_CTRL",
+ *     "executionRecord": {
+ *         "privateIp": "127.0.0.2",
+ *         "ecsTaskArn": "arn:aws-cn:ecs:cn-northwest-1:AWS_ACCOUNT_NO:task/onencp-test-cluster/1b73182c9229458b81044c9f9ef60645",
+ *         "status": "DONE",
+ *         "failure": {
+ *             "message": "io.lettuce.core.RedisConnectionException: Unable to connect to localhost:6379",
+ *             "traceId": "8fe21e2d94fc43ee"
+ *         }
+ *     }
+ * }
+ * </pre>
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
-@ToString(doNotUseGetters = true)
+@ToString(doNotUseGetters = true) // TODO super.toString()
 public class ActivityFailureFeedbackRequest extends ActivityFeedbackRequest {
 
     @Override
@@ -48,16 +68,22 @@ public class ActivityFailureFeedbackRequest extends ActivityFeedbackRequest {
      * @param feedbackRequest {@link ActivityFeedbackRequest}
      * @return {@link ActivityFailureFeedbackRequestBuilder}
      */
-    public static ActivityFailureFeedbackRequestBuilder<?, ?> builder(ActivityFeedbackRequest feedbackRequest) {
+    public static ActivityFailureFeedbackRequestBuilder<?, ?> builder(
+            ActivityFeedbackRequest feedbackRequest,
+            ActivityExecutionStatusEnum newActivityStatus,
+            ActivityExecutionFailureRecord.Failure failure
+    ) {
         return null == feedbackRequest ? new ActivityFailureFeedbackRequestBuilderImpl()
                 : new ActivityFailureFeedbackRequestBuilderImpl()
                 .journeyInstanceId(feedbackRequest.getJourneyInstanceId())
                 .journeyDefinitionId(feedbackRequest.getJourneyDefinitionId())
                 .activityId(feedbackRequest.getActivityId())
                 .activityCategory(feedbackRequest.getActivityCategory())
-                /* You most likely want to replace this {@link ActivityFeedbackRequest#executionRecord}
-                    with a {@link ActivityExecutionFailureRecord} afterwards. */
-                .executionRecord(feedbackRequest.getExecutionRecord());
+                .executionRecord(
+                        ActivityExecutionFailureRecord.builder(
+                                feedbackRequest.getExecutionRecord()
+                        ).status(newActivityStatus).failure(failure).build()
+                );
     }
 
     // https://www.baeldung.com/lombok-builder-custom-setter#customizing-lombok-builders

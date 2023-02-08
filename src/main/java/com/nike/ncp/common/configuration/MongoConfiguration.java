@@ -10,7 +10,6 @@ import org.springframework.core.env.Environment;
 
 @Configuration
 public class MongoConfiguration {
-
     private final MongoProperties mongoProperties;
 
     public MongoConfiguration(MongoProperties mongoProperties) {

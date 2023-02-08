@@ -16,9 +16,9 @@ def config = [
     ],
     qma: [ configFile: 'quality-config.yaml' ],
     pra: [
-        sdbPath: 'shared/bmx-github-cloud/service-user',
-        userNameKey: 'username',
-        passwordKey: 'password',
+//         sdbPath: 'shared/bmx-github-cloud/service-user',
+//         userNameKey: 'username',
+//         passwordKey: 'password',
     ],
     build : [
         image : "artifactory.nike.com:9002/openjdk:11-jdk",

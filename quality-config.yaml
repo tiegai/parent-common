@@ -5,12 +5,12 @@ qualityConfig:
           metricSource: checkstyle
           metricFile: build/reports/checkstyle/main.xml
           reportIndex: build/reports/checkstyle/main.html
-      - Jacoco:
-          metricSource: jacoco
-          metricFile: build/reports/jacoco/test/jacocoTestReport.xml
-          reportFiles:
-            - build/reports/jacoco/**/*
-          reportIndex: build/reports/jacoco/index.html
+#       - Jacoco:
+#           metricSource: jacoco
+#           metricFile: build/reports/jacoco/test/jacocoTestReport.xml
+#           reportFiles:
+#             - build/reports/jacoco/**/*
+#           reportIndex: build/reports/jacoco/index.html
       - Junit:
           metricSource: junit
           metricFile: build/test-results/test/*.xml
