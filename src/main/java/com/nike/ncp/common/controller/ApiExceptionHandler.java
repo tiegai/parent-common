@@ -22,7 +22,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ApiException.class)
     protected ResponseEntity<Object> handleApiException(RuntimeException ex, WebRequest request) {
         ApiException exception = (ApiException) ex;
-        log.warn("api_exception, code={}, errors={}", exception.getStatus().value(), exception.getErrors());
+        if (exception.isWarningMessage()) {
+            log.warn("api_warning_message, code={}, errors={}", exception.getStatus().value(), exception.getErrors());
+        } else {
+            log.error("api_exception, code={}, errors={}", exception.getStatus().value(), exception.getErrors());
+        }
         ApiExceptionResponse response = ApiExceptionResponse.builder().appName(appName).errors(exception.getErrors()).build();
         return handleExceptionInternal(ex, response, new HttpHeaders(), exception.getStatus(), request);
     }

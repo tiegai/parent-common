@@ -18,9 +18,16 @@ public class ApiException extends RuntimeException {
     @Builder.Default
     private List<ApiErrorMessage> errors = new ArrayList<>();
     private HttpStatus status;
+    @Builder.Default
+    private boolean warningMessage = false;
 
     public ApiException with(int code, String message) {
         errors.add(ApiErrorMessage.builder().code(code).message(message).build());
+        return this;
+    }
+
+    public ApiException warning() {
+        warningMessage = true;
         return this;
     }
 }
