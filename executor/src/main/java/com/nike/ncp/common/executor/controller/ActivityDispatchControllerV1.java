@@ -56,7 +56,7 @@ public interface ActivityDispatchControllerV1<CONFIG_TYPE> {
      * @param journeyInstanceId Journey's instance ID
      * @param activityId Journey activity's ID
      * @param activityPayload Journey activity's payload
-     * @return Ideally, {@link ResponseEntity}&#60;{@link ActivityExecutionStatusEnum#ACCEPTED} || {@link ActivityExecutionStatusEnum#REJECTED} || {@link ActivityExecutionStatusEnum#FAILED}&#62; <br/><br/>
+     * @return Ideally, {@link ResponseEntity}&#60;{@link ActivityExecutionStatusEnum#ACCEPTED} || {@link ActivityExecutionStatusEnum#REJECTED} || {@link ActivityExecutionStatusEnum#THROTTLED} || {@link ActivityExecutionStatusEnum#FAILED}&#62; <br/><br/>
      * After returned, {@link ActivityDispatchAspect#aroundActivityDispatch(ProceedingJoinPoint)} will intercept and
      * convert this return value into a {@link ResponseEntity}&#60;{@link ActivityExecutionRecord}&#62;,
      * and return to <a href="https://github.com/nike-gc-ncp/ncp-proxy">One-NCP proxy</a>.
