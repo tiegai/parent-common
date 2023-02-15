@@ -692,27 +692,18 @@ public class MongoServiceEngine implements MongoService {
      */
     @Override
     public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz) {
-        return getPageRespByCursor(criteriaWrapper, null, lastId, clazz, null);
+        return getPageRespByCursor(criteriaWrapper, lastId, clazz, null);
     }
+
     @Override
     public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz,
                                             String collectionName) {
-        return getPageRespByCursor(criteriaWrapper, null, lastId, clazz, collectionName);
+        return getPageRespByCursor(criteriaWrapper, lastId, clazz, collectionName);
     }
 
-    @Override
-    public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId, Class<T> clazz) {
-        return getPageRespByCursor(criteriaWrapper, sortBuilder, lastId, clazz, null);
-    }
-
-    @Override
-    public <T> PageResp<T> findPageByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder, String lastId,
-                                            Class<T> clazz, String collectionName) {
-        return getPageRespByCursor(criteriaWrapper, sortBuilder, lastId, clazz, collectionName);
-    }
-
-    private <T> PageResp<T> getPageRespByCursor(CriteriaWrapper criteriaWrapper, SortBuilder sortBuilder,
-                                                String lastId, Class<T> clazz, String collectionName) {
+    private <T> PageResp<T> getPageRespByCursor(CriteriaWrapper criteriaWrapper, String lastId, Class<T> clazz,
+                                                String collectionName) {
+        String id = "_id";
         Assert.notNull(criteriaWrapper.getCurrent(), "Current value must not be null and must be greater than 0.");
         Assert.notNull(criteriaWrapper.getSize(), "Size value must not be null and must be greater than 0.");
         PageResp<T> pageResp = new PageResp<>();
@@ -721,9 +712,6 @@ public class MongoServiceEngine implements MongoService {
         pageResult.setSize(criteriaWrapper.getSize());
         Query query = new Query(criteriaWrapper.build());
         exclude(criteriaWrapper, query);
-        if (sortBuilder != null) {
-            query.with(sortBuilder.toSort());
-        }
         Document condition = query.getQueryObject();
         MongoCollection<Document> collection;
         if (StringUtils.isNotEmpty(collectionName)) {
@@ -734,9 +722,9 @@ public class MongoServiceEngine implements MongoService {
         calculatePages(collection, criteriaWrapper, condition, pageResult);
         FindIterable iterable;
         if (StringUtils.isNotBlank(lastId)) {
-            condition.append("_id", new Document("$gt", new ObjectId(lastId)));
+            condition.append(id, new Document("$gt", new ObjectId(lastId)));
         }
-        iterable = collection.find(condition).limit(criteriaWrapper.getSize());
+        iterable = collection.find(condition).limit(criteriaWrapper.getSize()).sort(new Document(id, 1));
         List<T> list = new ArrayList<>();
         if (Objects.nonNull(iterable)) {
             MongoCursor cursor = iterable.iterator();
@@ -744,8 +732,8 @@ public class MongoServiceEngine implements MongoService {
                 Object next = cursor.next();
                 if (next instanceof Document) {
                     Document t = (Document) next;
-                    pageResult.setLastId(t.get("_id").toString());
-                    t.putIfAbsent("id", t.get("_id"));
+                    pageResult.setLastId(t.get(id).toString());
+                    t.putIfAbsent("id", t.get(id));
                     T t1 = BeanUtil.copyProperties(t, clazz);
                     list.add(t1);
                 }
