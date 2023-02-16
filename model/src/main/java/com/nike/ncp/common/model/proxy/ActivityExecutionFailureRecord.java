@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @RequiredArgsConstructor
-@ToString(doNotUseGetters = true)
+@ToString(doNotUseGetters = true, callSuper = true)
 public class ActivityExecutionFailureRecord extends ActivityExecutionRecord {
     @NonNull
     private Failure failure;

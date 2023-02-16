@@ -26,7 +26,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @RequiredArgsConstructor
-@ToString(doNotUseGetters = true) // TODO super.toString()
+@ToString(doNotUseGetters = true, callSuper = true)
 public class ActivityFeedbackRequest extends ActivityFeedbackEssentials {
     /**
      * If you're feeding back failure of an {@link DispatchedActivity},

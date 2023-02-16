@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
+@Deprecated
 @Data
 @SuperBuilder
 public class ActivityStatusQueryResponse extends BaseJourneyActivity {

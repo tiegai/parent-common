@@ -29,7 +29,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-@ToString(doNotUseGetters = true) // TODO super.toString()
+@ToString(doNotUseGetters = true, callSuper = true)
 public class ActivityFailureFeedbackRequest extends ActivityFeedbackRequest {
 
     @Override
