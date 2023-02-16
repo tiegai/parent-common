@@ -138,9 +138,9 @@ public class ProxyFeedbackService {
                 .retrieve()
                 .toBodilessEntity()
                 // success/error handling
-                .doOnSuccess(r -> log.info("{} succeeded, status={} feedback={}",
+                .doOnSuccess(r -> log.info("{} succeeded, status={}, feedback={}",
                         bodyClass.getName(), r.getStatusCode(), feedbackRequest)
-                ).doOnError(r -> log.error("{} failed, reason={} feedback={}",
+                ).doOnError(r -> log.error("{} failed, reason={}, feedback={}",
                         bodyClass.getName(), r.getMessage(), feedbackRequest)
                 ).onErrorResume(Mono::error)
                 // retry strategy
