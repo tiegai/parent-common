@@ -16,9 +16,12 @@ def config = [
     ],
     qma: [ configFile: 'quality-config.yaml' ],
     pra: [
-//         sdbPath: 'shared/bmx-github-cloud/service-user',
-//         userNameKey: 'username',
-//         passwordKey: 'password',
+        "cerberusEnv": "china-v2",
+        "sdbPath": "shared/notification/credentials",
+        // TODO apply for new pipeline creds
+        // https://nikedigital.slack.com/archives/C043C89M2FP/p1673256474819139?thread_ts=1673253792.087529&cid=C043C89M2FP
+        "userNameKey": "gc-ncp-cds-pipelineuser",
+        "passwordKey": "gc-ncp-cds-pipelinepasswordpat"
     ],
     build : [
         image : "artifactory.nike.com:9002/openjdk:11-jdk",
