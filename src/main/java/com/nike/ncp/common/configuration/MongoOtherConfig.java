@@ -3,7 +3,9 @@ package com.nike.ncp.common.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
@@ -12,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 
 @Configuration
-public class MongoConverterConfig {
+public class MongoOtherConfig {
     @Autowired
     private MongoDatabaseFactory mongoDatabaseFactory;
 
@@ -26,5 +28,11 @@ public class MongoConverterConfig {
         // Here is to remove the _class field inserted into the database.
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         return converter;
+    }
+
+    @Bean
+    @Profile({"test", "prod"})
+    public MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
+        return new MongoTransactionManager(dbFactory);
     }
 }
