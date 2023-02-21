@@ -85,8 +85,8 @@ allprojects {
         
         maven {
             credentials {
-                username System.getenv('SA_U') //fetched from environment
-                password System.getenv('SA_P') //fetched from environment
+                username System.getenv('SA_U')
+                password System.getenv('SA_P')
             }
             url 'https://artifactory.nike.com/artifactory/all-repos'
         }
@@ -190,7 +190,8 @@ dependencies {
     compile("com.github.xiaoymin:knife4j-openapi2-spring-boot-starter:4.0.0")
     // Test dependencies
     testCompile("junit:junit:${junitVersion}")
-    testCompile("org.mockito:mockito-core:${mockitoVersion}")
+//    testCompile("org.mockito:mockito-core:${mockitoVersion}")
+    testCompile("org.mockito:mockito-inline:3.12.4")
     testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
     testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 }

@@ -77,10 +77,13 @@ jacocoTestReport {
             fileTree(dir: it,
                     exclude: [
                             // inherited from blueprint
-                            '**/server/**',
-                            '**/phylon/**',
-                            '**/Application.*',
-                            '**/model/**',
+//                            '**/aspect/**',
+//                            '**/configuration/**',
+//                            '**/controller/**',
+//                            '**/exception/**',
+//                            '**/Application.*',
+//                            '**/model/**',
+                            '**/**/**'
                     ])
         })
     }
