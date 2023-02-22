@@ -24,15 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.convert.MongoConverter;
-import org.springframework.data.mongodb.core.convert.QueryMapper;
-import org.springframework.data.mongodb.core.convert.UpdateMapper;
-import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,16 +39,6 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class MongoServiceEngine implements MongoService {
-
-    private final MongoConverter mongoConverter;
-    private QueryMapper queryMapper;
-    private UpdateMapper updateMapper;
-
-    @PostConstruct
-    public void init() {
-        queryMapper = new QueryMapper(mongoConverter);
-        updateMapper = new UpdateMapper(mongoConverter);
-    }
 
     private final MongoTemplate mongoTemplate;
 
@@ -569,10 +554,6 @@ public class MongoServiceEngine implements MongoService {
 
     public <T> PageResp<T> findPage(CriteriaWrapper criteriaWrapper, Class<T> clazz, String collectionName) {
         return getPageResp(criteriaWrapper, null, clazz, collectionName);
-    }
-
-    private Collation ignoreCaseCollation() {
-        return Collation.of("en");
     }
 
     @Override
