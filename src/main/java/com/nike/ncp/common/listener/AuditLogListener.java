@@ -21,7 +21,7 @@ public class AuditLogListener {
     @EventListener
     public void handleAuditLog(AuditLogEvent logEvent) {
         SysAuditLog sysAuditLog = logEvent.getSysAuditLog();
-        sysAuditLog.setAuditTime(IsoDateUtil.toUtc(LocalDateTime.now()));
+        sysAuditLog.setOperTime(IsoDateUtil.toUtc(LocalDateTime.now()));
         mongoService.insert(sysAuditLog);
     }
 }

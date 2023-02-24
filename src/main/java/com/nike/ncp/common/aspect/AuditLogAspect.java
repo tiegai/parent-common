@@ -48,7 +48,8 @@ public class AuditLogAspect {
             HttpServletRequest request = requestAttributes.getRequest();
             sysAuditLog.setAction(request.getMethod());
             sysAuditLog.setOperUrl(request.getRequestURI());
-            sysAuditLog.setOperUser(request.getHeader(Constant.USER_EMAIL));
+            sysAuditLog.setOperBy(request.getHeader(Constant.USER_EMAIL));
+            sysAuditLog.setOperByName(request.getHeader(Constant.USER_NAME));
         }
         applicationEventPublisher.publishEvent(new AuditLogEvent(this, sysAuditLog));
         log.info("event=record_audit_log, The annotation @AuditLog record log to succeeded");

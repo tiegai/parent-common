@@ -22,11 +22,13 @@ public class SysAuditLog implements Serializable {
 
     private String operType;
 
-    private String operUser;
+    private String operBy;
+
+    private String operByName;
 
     private String description;
 
-    private LocalDateTime auditTime;
+    private LocalDateTime operTime;
 
     public String getId() {
         return id;
@@ -76,12 +78,20 @@ public class SysAuditLog implements Serializable {
         this.operType = operType;
     }
 
-    public String getOperUser() {
-        return operUser;
+    public String getOperBy() {
+        return operBy;
     }
 
-    public void setOperUser(String operUser) {
-        this.operUser = operUser;
+    public void setOperBy(String operBy) {
+        this.operBy = operBy;
+    }
+
+    public String getOperByName() {
+        return operByName;
+    }
+
+    public void setOperByName(String operByName) {
+        this.operByName = operByName;
     }
 
     public String getDescription() {
@@ -92,11 +102,11 @@ public class SysAuditLog implements Serializable {
         this.description = description;
     }
 
-    public LocalDateTime getAuditTime() {
-        return auditTime;
+    public LocalDateTime getOperTime() {
+        return operTime;
     }
 
-    public void setAuditTime(LocalDateTime auditTime) {
-        this.auditTime = auditTime;
+    public void setOperTime(LocalDateTime operTime) {
+        this.operTime = operTime;
     }
 }

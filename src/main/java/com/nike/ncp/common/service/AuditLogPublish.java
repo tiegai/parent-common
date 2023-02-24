@@ -34,7 +34,8 @@ public class AuditLogPublish {
         sysAuditLog.setAppName(appName);
         sysAuditLog.setOperType(operType.name());
         sysAuditLog.setDescription(description);
-        sysAuditLog.setOperUser(request.getHeader(Constant.USER_EMAIL));
+        sysAuditLog.setOperBy(request.getHeader(Constant.USER_EMAIL));
+        sysAuditLog.setOperByName(request.getHeader(Constant.USER_NAME));
         sysAuditLog.setAction(request.getMethod());
         sysAuditLog.setOperUrl(request.getRequestURI());
         applicationEventPublisher.publishEvent(new AuditLogEvent(this, sysAuditLog));
