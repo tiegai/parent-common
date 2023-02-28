@@ -1,5 +1,6 @@
 package com.nike.ncp.common.configuration;
 
+import com.nike.wingtips.spring.interceptor.WingtipsClientHttpRequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -10,6 +11,7 @@ public class RestTemplateConfiguration {
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
+        restTemplate.getInterceptors().add(new WingtipsClientHttpRequestInterceptor(true));
         return restTemplate;
     }
 }
