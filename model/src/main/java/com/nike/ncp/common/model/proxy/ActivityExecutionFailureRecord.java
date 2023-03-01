@@ -50,8 +50,10 @@ public class ActivityExecutionFailureRecord extends ActivityExecutionRecord {
 
     @Data
     @SuperBuilder
+    @NoArgsConstructor
     @AllArgsConstructor
     @RequiredArgsConstructor
+    @ToString(doNotUseGetters = true)
     public static class Failure {
         /**
          * A message that clearly summarizes what went wrong.

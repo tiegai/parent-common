@@ -42,20 +42,6 @@ public class ActivityFailureFeedbackRequest extends ActivityFeedbackRequest {
     }
 
     /**
-     * Please use {@link ActivityFailureFeedbackRequest#setExecutionRecord(ActivityExecutionFailureRecord)}, instead.
-     */
-    @Deprecated
-    @Override
-    public void setExecutionRecord(@NonNull ActivityExecutionRecord executionRecord) {
-        if (executionRecord instanceof ActivityExecutionFailureRecord) {
-            this.setExecutionRecord((ActivityExecutionFailureRecord) executionRecord);
-        } else {
-            throw new UnsupportedOperationException(String.format("Expected type: %s. Actual type: %s",
-                    ActivityExecutionFailureRecord.class.getName(), executionRecord.getClass().getName()));
-        }
-    }
-
-    /**
      * OOP-wise, similar to {@link ActivityExecutionFailureRecord#builder()}.
      * @return {@link ActivityFailureFeedbackRequestBuilder}
      */
@@ -94,20 +80,6 @@ public class ActivityFailureFeedbackRequest extends ActivityFeedbackRequest {
         public B executionRecord(ActivityExecutionFailureRecord failureRecord) {
             super.executionRecord(failureRecord);
             return this.self();
-        }
-
-        /**
-         * Please use {@link ActivityFailureFeedbackRequestBuilder#executionRecord(ActivityExecutionFailureRecord)}, instead.
-         */
-        @Deprecated
-        @Override
-        public B executionRecord(ActivityExecutionRecord record) {
-            if (record instanceof ActivityExecutionFailureRecord) {
-                return this.executionRecord((ActivityExecutionFailureRecord) record);
-            } else {
-                throw new UnsupportedOperationException(String.format("Expected type: %s. Actual type: %s",
-                        ActivityExecutionFailureRecord.class.getName(), record.getClass().getName()));
-            }
         }
     }
 }
