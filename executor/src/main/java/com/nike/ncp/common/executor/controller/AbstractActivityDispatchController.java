@@ -5,6 +5,7 @@ import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.journey.AudienceConfig;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
 import com.nike.ncp.common.model.proxy.DispatchedActivity;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  * <p/>
  * <pre class="code">
  * &#64;{@link RestController}
- * public class ConcreteController implements {@link ActivityDispatchControllerV1}&#60;{@link AudienceConfig}&#62; {
+ * public class ConcreteController implements {@link AbstractActivityDispatchController}&#60;{@link AudienceConfig}&#62; {
  *      &#64;Override
  *      public {@link ResponseEntity}<{@link ActivityExecutionStatusEnum}> putActivity(
  *          &#64;{@link PathVariable} String journeyInstanceId,
@@ -41,13 +42,10 @@ import org.springframework.web.bind.annotation.RestController;
  * </pre>
  * Learn more about how <a href="https://www.baeldung.com/spring-interface-driven-controllers#2-interface">interface-driven controller</a> works.
  *
- * @param <CONFIG_TYPE> Data type of {@link DispatchedActivity.Activity#getConfig()}. <br/>
- *                     Consult authors of <a href="https://github.com/nike-gc-ncp/ncp-journeyengine">ncp-journeyengine</a>
- *                     for a list of available {@code CONFIG_TYPE}s.
  */
-@RestController
+@Slf4j
 @RequestMapping("/v1")
-public interface ActivityDispatchControllerV1<CONFIG_TYPE> {
+public abstract class AbstractActivityDispatchController<ACTIVITY_CONFIG> {
     /**
      * Accepts and processes a {@link DispatchedActivity} sent from <a href="https://github.com/nike-gc-ncp/ncp-proxy">One-NCP proxy</a>.
      * <br/>
@@ -62,9 +60,19 @@ public interface ActivityDispatchControllerV1<CONFIG_TYPE> {
      * and return to <a href="https://github.com/nike-gc-ncp/ncp-proxy">One-NCP proxy</a>.
      */
     @PutMapping("/journeyInstance/{journeyInstanceId}/activity/{activityId}")
-    ResponseEntity<ActivityExecutionStatusEnum> putActivity(
+    abstract ResponseEntity<ActivityExecutionStatusEnum> putActivity(
             @PathVariable ObjectId journeyInstanceId,
             @PathVariable ObjectId activityId,
-            @RequestBody DispatchedActivity<CONFIG_TYPE> activityPayload
+            @RequestBody DispatchedActivity<ACTIVITY_CONFIG> activityPayload
     );
+
+    protected void log(String title, DispatchedActivity<ACTIVITY_CONFIG> activityPayload) {
+        String text = title + " [journeyDefinitionId={}], [journeyInstanceId={}], [activityId={}], [category={}].";
+        log.info(text, activityPayload.getJourney().getDefinitionId(), activityPayload.getJourney().getInstanceId(), activityPayload.getActivity().getId(), activityPayload.getActivity().getCategory().value());
+    }
+
+    protected void log(String title, DispatchedActivity<ACTIVITY_CONFIG> activityPayload, Throwable throwable) {
+        String text = title + " [journeyDefinitionId={}], [journeyInstanceId={}], [activityId={}], [category={}]. message: {}";
+        log.error(text, activityPayload.getJourney().getDefinitionId(), activityPayload.getJourney().getInstanceId(), activityPayload.getActivity().getId(), activityPayload.getActivity().getCategory().value(), throwable.getMessage(), throwable);
+    }
 }

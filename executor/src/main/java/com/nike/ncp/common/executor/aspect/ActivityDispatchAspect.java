@@ -1,16 +1,13 @@
 package com.nike.ncp.common.executor.aspect;
 
-import com.nike.ncp.common.executor.controller.ActivityDispatchControllerV1;
 import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.proxy.ActivityExecutionFailureRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
-import com.nike.ncp.common.model.proxy.DispatchedActivity;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -29,12 +26,12 @@ import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.REJECTED;
 @Component
 public class ActivityDispatchAspect {
     /**
-     * Intercepts {@link ActivityDispatchControllerV1#putActivity(ObjectId, ObjectId, DispatchedActivity)}
+     * Intercepts.
      */
     @Pointcut(value = "activityDispatchInterface() && putActivityMethod()")
     public void activityDispatch() {
     }
-    @Pointcut(value = "target(com.nike.ncp.common.executor.controller.ActivityDispatchControllerV1)")
+    @Pointcut(value = "target(com.nike.ncp.common.executor.controller.AbstractActivityDispatchController)")
     public void activityDispatchInterface() {
     }
     @Pointcut(value = "execution(org.springframework.http.ResponseEntity<com.nike.ncp.common.model.ActivityExecutionStatusEnum> *..putActivity(org.bson.types.ObjectId,org.bson.types.ObjectId,*))")
@@ -42,14 +39,12 @@ public class ActivityDispatchAspect {
     }
 
     /**
-     * Populates logic around {@link ActivityDispatchControllerV1#putActivity(ObjectId, ObjectId, DispatchedActivity)}.
+     * Populates logic around .
      * @return {@link ResponseEntity}&#60;{@link ActivityExecutionRecord}&#62;
      */
     @SuppressWarnings("unchecked")
     @Around(value = "activityDispatch()")
     public ResponseEntity<ActivityExecutionRecord> aroundActivityDispatch(ProceedingJoinPoint pjp) {
-        // TODO reject an activity if needed, e.g. in case of system overload.
-
         // TODO turn ON scale-in protection. Use AWS SDK as needed.
             // mind the max 48-hour default effective period. Will need rollover strategy.
 

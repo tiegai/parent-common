@@ -85,6 +85,8 @@ public class ProxyFeedbackService {
             @NonNull ActivityFeedbackEssentials essentials,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
+        String text = "Executor success feedback [journeyDefinitionId={}], [journeyInstanceId={}], [activityId={}], [category={}].";
+        log.info(text, essentials.getJourneyDefinitionId(), essentials.getJourneyInstanceId(), essentials.getActivityId(), essentials.getActivityCategory().value());
         return this.feedBack(essentials, null, retryExhaustionHandler);
     }
 
@@ -101,6 +103,8 @@ public class ProxyFeedbackService {
             @NonNull Throwable failure,
             BiFunction<RetryBackoffSpec, Retry.RetrySignal, Throwable> retryExhaustionHandler
     ) {
+        String text = "Executor failure feedback [journeyDefinitionId={}], [journeyInstanceId={}], [activityId={}], [category={}]. message: {}";
+        log.error(text, essentials.getJourneyDefinitionId(), essentials.getJourneyInstanceId(), essentials.getActivityId(), essentials.getActivityCategory().value(), failure.getMessage(), failure);
         return this.feedBack(essentials, failure, retryExhaustionHandler);
     }
 
