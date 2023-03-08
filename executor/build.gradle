@@ -11,8 +11,10 @@ dependencies {
     
     // Spring
     api "org.springframework.boot:spring-boot-starter-webflux"
-    // AWS v1
-    api("com.amazonaws:aws-java-sdk-ecs")
+    // AWS
+    implementation("software.amazon.awssdk:ecs")
+    
+    implementation("com.nike.wingtips:wingtips-java8:${wingtipsVersion}")
     
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"

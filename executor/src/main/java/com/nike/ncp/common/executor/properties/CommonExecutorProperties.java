@@ -25,4 +25,7 @@ public class CommonExecutorProperties {
     private String successFeedbackPath;
     @Value("${ncp.proxy.failure.feedback.path}")
     private String failureFeedbackPath;
+
+    @Value("${ecs.cluster.name:#{null}}")
+    private String ecsClusterName;
 }
