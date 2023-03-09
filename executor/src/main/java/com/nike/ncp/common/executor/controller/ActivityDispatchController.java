@@ -3,7 +3,7 @@ package com.nike.ncp.common.executor.controller;
 import com.nike.ncp.common.executor.model.ActivityExecutionResult;
 import com.nike.ncp.common.executor.service.CommonActivityDispatchService;
 import com.nike.ncp.common.executor.service.ProxyFeedbackService;
-import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
+import com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackEssentials;
 import com.nike.ncp.common.model.proxy.DispatchedActivity;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.ACCEPTED;
-import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.REJECTED;
-import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.THROTTLED;
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.ACCEPTED;
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.REJECTED;
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.THROTTLED;
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = @Autowired)

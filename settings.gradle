@@ -22,4 +22,7 @@ pluginManagement {
 rootProject.name = artifactId
 include 'model'
 include 'executor'
+include 'mongo'
+include 'redis'
+include 'utilities'
 

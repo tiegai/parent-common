@@ -1,9 +1,9 @@
 package com.nike.ncp.common.executor.controller;
 
 import com.nike.ncp.common.executor.aspect.ActivityDispatchAspect;
-import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.journey.AudienceConfig;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
+import com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.proxy.DispatchedActivity;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;

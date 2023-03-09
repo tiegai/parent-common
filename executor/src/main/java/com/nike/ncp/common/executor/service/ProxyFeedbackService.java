@@ -24,8 +24,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.DONE;
-import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.FAILED;
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.DONE;
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.FAILED;
 
 @Slf4j
 @Service

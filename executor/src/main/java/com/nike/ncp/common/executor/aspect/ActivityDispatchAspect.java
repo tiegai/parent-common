@@ -1,8 +1,8 @@
 package com.nike.ncp.common.executor.aspect;
 
-import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.proxy.ActivityExecutionFailureRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
+import com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.ACCEPTED;
-import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.DONE;
-import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.FAILED;
-import static com.nike.ncp.common.model.ActivityExecutionStatusEnum.REJECTED;
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.ACCEPTED;
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.DONE;
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.FAILED;
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.REJECTED;
 
 @Slf4j
 @Aspect
@@ -34,7 +34,7 @@ public class ActivityDispatchAspect {
     @Pointcut(value = "target(com.nike.ncp.common.executor.controller.AbstractActivityDispatchController)")
     public void activityDispatchInterface() {
     }
-    @Pointcut(value = "execution(org.springframework.http.ResponseEntity<com.nike.ncp.common.model.ActivityExecutionStatusEnum> *..putActivity(org.bson.types.ObjectId,org.bson.types.ObjectId,*))")
+    @Pointcut(value = "execution(org.springframework.http.ResponseEntity<com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum> *..putActivity(org.bson.types.ObjectId,org.bson.types.ObjectId,*))")
     public void putActivityMethod() {
     }
 

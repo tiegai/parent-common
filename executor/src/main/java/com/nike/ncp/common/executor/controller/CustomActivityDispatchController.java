@@ -2,7 +2,7 @@ package com.nike.ncp.common.executor.controller;
 
 import com.nike.ncp.common.executor.model.ActivityExecutionResult;
 import com.nike.ncp.common.executor.service.CustomActivityDispatchService;
-import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
+import com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.proxy.DispatchedActivity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -16,7 +16,7 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
 
-import static com.nike.ncp.common.configuration.AppNameConfiguration.APP_NAME_BEAN_NAME;
+import static com.nike.ncp.common.utilities.configuration.AppNameConfiguration.APP_NAME_BEAN_NAME;
 
 @Slf4j
 @RestController

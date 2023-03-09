@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 
-import static com.nike.ncp.common.configuration.AppNameConfiguration.APP_NAME_BEAN_NAME;
+import static com.nike.ncp.common.utilities.configuration.AppNameConfiguration.APP_NAME_BEAN_NAME;
 
 @Slf4j
 @Lazy

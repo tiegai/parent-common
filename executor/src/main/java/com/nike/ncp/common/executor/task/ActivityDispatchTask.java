@@ -1,9 +1,9 @@
 package com.nike.ncp.common.executor.task;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.journey.ActivityCategoryEnum;
 import com.nike.ncp.common.model.proxy.ActivityExecutionFailureRecord;
+import com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackRequest;
 import com.nike.ncp.common.model.proxy.DispatchedActivity;
 import com.nike.ncp.common.model.util.ObjectIdSerializer;

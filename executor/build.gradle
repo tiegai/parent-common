@@ -4,6 +4,7 @@ version = releaseVersion
 dependencies {
     implementation(rootProject)
     implementation(project(":model"))
+    implementation(project(":utilities"))
     
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-webflux")

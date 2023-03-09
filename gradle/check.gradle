@@ -54,7 +54,9 @@ task spotbugsHtml {
     group = "Verification"
     description = "Creates a human readable Spotbugs report"
     doLast {
-        ant.xslt(in: file("$buildDir/reports/spotbugs/main.xml"),
+        def spotbugsXml = file("$buildDir/reports/spotbugs/main.xml")
+        if (!spotbugsXml.exists()) return
+        ant.xslt(in: spotbugsXml,
                 style: rootProject.file('codequality/spotbugs_default.xsl'),
                 out: new File("$buildDir/reports/spotbugs/main.html"))
     }
@@ -114,6 +116,7 @@ task checkstyleHtml {
     group = "Verification"
     description = "Creates a human readable Checkstyle report"
     doLast {
+        if (!checkstyleMain.reports.xml.destination.exists()) return
         ant.xslt(in: checkstyleMain.reports.xml.destination,
                 style: rootProject.file('codequality/checkstyle-noframes-sorted.xsl'),
                 out: new File(checkstyleMain.reports.xml.destination.parent, 'main.html'))

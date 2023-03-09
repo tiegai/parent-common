@@ -1,6 +1,5 @@
 package com.nike.ncp.common.model.proxy;
 
-import com.nike.ncp.common.model.ActivityExecutionStatusEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
