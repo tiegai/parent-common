@@ -19,7 +19,7 @@ spotbugs {
     reportsDir = file(project.projectDir.getAbsolutePath() + '/build/reports/spotbugs')
 
     // Optional exclusion specification
-    def excludeFile = file('codequality/spotbugsexclude.xml')
+    def excludeFile = file('../codequality/spotbugsexclude.xml') // TODO try not to make any exceptions, ensures code quality
     if (excludeFile.isFile()) {
         excludeFilter = excludeFile
     }
