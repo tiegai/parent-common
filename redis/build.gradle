@@ -1,17 +1,7 @@
-plugins {
-    id 'java'
-}
-
-group 'com.nike.gc.ncp.common'
-version '2.1.0.0'
-
-repositories {
-    mavenCentral()
-}
+version = releaseVersion
 
 dependencies {
     implementation(rootProject)
-    //implementation(project(":model"))
     
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("javax.annotation:javax.annotation-api")

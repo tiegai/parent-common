@@ -1,15 +1,16 @@
-group = 'com.nike.gc.ncp.common'
 version = releaseVersion
 
 dependencies {
 	// https://stackoverflow.com/a/44914700
 	// https://discuss.gradle.org/t/how-do-i-put-a-root-project-dependency-into-a-sub-project/7484/14
-	implementation rootProject
-	implementation("org.mongodb:bson")
-	implementation("com.fasterxml.jackson.core:jackson-databind")
+	implementation(rootProject)
+	
 	implementation("org.springframework:spring-web")
 	implementation("org.springframework.data:spring-data-mongodb")
 	
-	compileOnly "org.projectlombok:lombok:${lombokVersion}"
-	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+	implementation("org.mongodb:bson")
+	implementation("com.fasterxml.jackson.core:jackson-databind")
+	
+	compileOnly("org.projectlombok:lombok:${lombokVersion}")
+	annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 }
