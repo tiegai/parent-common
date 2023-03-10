@@ -8,24 +8,32 @@ import com.nike.ncp.common.model.proxy.ActivityFailureFeedbackRequest;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackEssentials;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackRequest;
 import com.nike.ncp.common.model.proxy.ActivityFeedbackRequest.ActivityFeedbackRequestBuilder;
+import com.nike.wingtips.util.TracingState;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriBuilder;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;
 
 import javax.annotation.Resource;
+import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.DONE;
 import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.FAILED;
+import static com.nike.wingtips.util.AsyncWingtipsHelperStatic.biFunctionWithTracing;
+import static com.nike.wingtips.util.AsyncWingtipsHelperStatic.consumerWithTracing;
 
 @Slf4j
 @Service
@@ -49,6 +57,9 @@ public class ProxyFeedbackService {
 
     @Resource
     private CommonExecutorProperties properties;
+    @Resource
+    @Qualifier(value = "commonExecutorWebClient")
+    private WebClient commonExecutorWebClient;
 
     /**
      * Feed back a success to <a href="https://github.com/nike-gc-ncp/ncp-proxy">ncp-proxy</a>.
@@ -119,7 +130,7 @@ public class ProxyFeedbackService {
         if (null != throwable) { // this is not a success but a failure feedback
             final ActivityExecutionFailureRecord.Failure failure = ActivityExecutionFailureRecord.Failure.builder()
                     .message(throwable.getMessage())
-                    .traceId(null) // TODO distributed traceId, from wingtips?
+                    .traceId(MDC.get("traceId"))
                     .build();
 
             requestBuilder = ActivityFailureFeedbackRequest.builder(requestBuilder.build(), FAILED, failure);
@@ -130,23 +141,29 @@ public class ProxyFeedbackService {
                 ? ActivityFailureFeedbackRequest.class
                 : ActivityFeedbackRequest.class;
 
-        return WebClient.create(properties.getProxyHostUrl())
+        final String host = properties.getProxyHostUrl();
+        final Function<UriBuilder, URI> pathFunc = uriBuilder -> uriBuilder.path(
+                        null == throwable ? properties.getSuccessFeedbackPath() : properties.getFailureFeedbackPath()
+                ).build(essentials.getJourneyInstanceId(), essentials.getActivityId());
+
+        return commonExecutorWebClient
                 .post()
-                .uri(uriBuilder -> uriBuilder.path(
-                    null == throwable
-                        ? properties.getSuccessFeedbackPath()
-                        : properties.getFailureFeedbackPath())
-                    .build(essentials.getJourneyInstanceId(), essentials.getActivityId())
-                ).body(Mono.just(feedbackRequest), bodyClass)
+                .uri(host, pathFunc)
+                .body(Mono.just(feedbackRequest), bodyClass)
+                /*
+                  traceId outbound: propagate tracing to downstream
+                  https://github.com/Nike-Inc/wingtips/tree/main/wingtips-spring-webflux#register-a-wingtipsspringwebfluxexchangefilterfunction-for-automatic-tracing-propagation-when-using-springs-reactive-webclient
+                 */
+                .attribute(TracingState.class.getName(), TracingState.getCurrentThreadTracingState())
                 // network exchange
                 .retrieve()
                 .toBodilessEntity()
                 // success/error handling
-                .doOnSuccess(r -> log.info("{} succeeded, status={}, feedback={}",
+                .doOnSuccess(consumerWithTracing(r -> log.info("{} succeeded, status={}, feedback={}",
                         bodyClass.getName(), r.getStatusCode(), feedbackRequest)
-                ).doOnError(r -> log.error("{} failed, reason={}, feedback={}",
+                )).doOnError(consumerWithTracing(r -> log.error("{} failed, reason={}, feedback={}",
                         bodyClass.getName(), r.getMessage(), feedbackRequest)
-                ).onErrorResume(Mono::error)
+                )).onErrorResume(Mono::error)
                 // retry strategy
                 .retryWhen(getDefaultRetrySpec(feedbackRequest, retryExhaustionHandler))
                 // https://stackoverflow.com/a/59286752
@@ -182,14 +199,14 @@ public class ProxyFeedbackService {
                         Objects.requireNonNullElse(feedbackMaxRetries, Long.MAX_VALUE),
                         Duration.ofSeconds(feedbackRetryInterval)
                 ).jitter(0.5d)
-                .doBeforeRetry(s -> log.warn("Retrying({}/{}) {}, reason={}, feedback={}",
+                .doBeforeRetry(consumerWithTracing(s -> log.warn("Retrying({}/{}) {}, reason={}, feedback={}",
                         s.totalRetries() + 1, feedbackMaxRetries,
                         feedbackRequest.getClass().getName(),
                         s.failure().getMessage(),
                         feedbackRequest)
-                ).onRetryExhaustedThrow(Objects.requireNonNullElse(
-                        retryExhaustionHandler,
-                        getDefaultRetryExhaustionHandler()
+                )).onRetryExhaustedThrow(Objects.requireNonNullElse(
+                        biFunctionWithTracing(retryExhaustionHandler),
+                        biFunctionWithTracing(getDefaultRetryExhaustionHandler())
                 ));
     }
 

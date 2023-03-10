@@ -13,6 +13,7 @@ dependencies {
     
     implementation("org.mongodb:bson")
     
+    implementation("com.nike.wingtips:wingtips-zipkin2-spring-boot2-webflux:${wingtipsVersion}")
     implementation("com.nike.wingtips:wingtips-java8:${wingtipsVersion}")
     
     compileOnly("org.projectlombok:lombok:${lombokVersion}")

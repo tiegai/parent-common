@@ -8,6 +8,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -74,7 +75,7 @@ public class ActivityDispatchAspect {
             ).failure(
                     ActivityExecutionFailureRecord.Failure.builder()
                             .message(e.getMessage())
-                            .traceId(null) // TODO distributed traceId, from wingtips?
+                            .traceId(MDC.get("traceId"))
                             .build()
             ).build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(failureRecord);
