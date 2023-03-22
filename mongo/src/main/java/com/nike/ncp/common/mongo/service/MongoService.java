@@ -22,25 +22,25 @@ public interface MongoService {
 
     void updateById(Object object, String collectionName);
 
-    void updateFirst(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, Class<?> clazz);
+    long updateFirst(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, Class<?> clazz);
 
-    void updateFirst(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, String collectionName);
+    long updateFirst(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, String collectionName);
 
-    void updateMulti(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, Class<?> clazz);
+    long updateMulti(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, Class<?> clazz);
 
-    void updateMulti(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, String collectionName);
+    long updateMulti(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, String collectionName);
 
-    void deleteById(String id, Class<?> clazz);
+    long deleteById(String id, Class<?> clazz);
 
-    void deleteById(String id, String collectionName);
+    long deleteById(String id, String collectionName);
 
-    void deleteByIds(List<String> ids, Class<?> clazz);
+    long deleteByIds(List<String> ids, Class<?> clazz);
 
-    void deleteByIds(List<String> ids, String collectionName);
+    long deleteByIds(List<String> ids, String collectionName);
 
-    void deleteByQuery(CriteriaWrapper criteriaWrapper, Class<?> clazz);
+    long deleteByQuery(CriteriaWrapper criteriaWrapper, Class<?> clazz);
 
-    void deleteByQuery(CriteriaWrapper criteriaWrapper, String collectionName);
+    long deleteByQuery(CriteriaWrapper criteriaWrapper, String collectionName);
 
     <T> T findById(String id, Class<T> clazz);
 

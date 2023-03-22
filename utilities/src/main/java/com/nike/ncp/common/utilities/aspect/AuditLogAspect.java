@@ -30,6 +30,7 @@ public class AuditLogAspect {
     private String appName;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+
     @Pointcut("@annotation(com.nike.ncp.common.utilities.model.AuditLog)")
     public void auditLog() {
     }
@@ -42,6 +43,7 @@ public class AuditLogAspect {
         sysAuditLog.setAppName(appName);
         sysAuditLog.setOperType(auditLog.operType().name());
         sysAuditLog.setDescription(auditLog.description());
+        sysAuditLog.setResourceId(auditLog.resourceId());
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
         if (Objects.nonNull(attributes)) {
             ServletRequestAttributes requestAttributes = (ServletRequestAttributes) attributes;

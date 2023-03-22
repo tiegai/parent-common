@@ -1,5 +1,7 @@
 package com.nike.ncp.common.executor.aspect;
 
+import com.nike.ncp.common.executor.properties.EcsEnvMetaData;
+import com.nike.ncp.common.executor.service.EcsScaleInProtectionService;
 import com.nike.ncp.common.model.proxy.ActivityExecutionFailureRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
@@ -29,6 +32,9 @@ public class ActivityDispatchAspect {
     /**
      * Intercepts.
      */
+    @Resource
+    private EcsScaleInProtectionService ecsScaleInProtectionService;
+
     @Pointcut(value = "activityDispatchInterface() && putActivityMethod()")
     public void activityDispatch() {
     }
@@ -46,15 +52,13 @@ public class ActivityDispatchAspect {
     @SuppressWarnings("unchecked")
     @Around(value = "activityDispatch()")
     public ResponseEntity<ActivityExecutionRecord> aroundActivityDispatch(ProceedingJoinPoint pjp) {
-        // TODO turn ON scale-in protection. Use AWS SDK as needed.
-            // mind the max 48-hour default effective period. Will need rollover strategy.
-
+        // mind the max 48-hour effective period default 2-hour. Will need rollover strategy.
+        ecsScaleInProtectionService.scaleInProtection("Enable", true);
         final ActivityExecutionRecord.ActivityExecutionRecordBuilder<?, ?> recordBuilder =
                 ActivityExecutionRecord.builder()
                         .beginTime(LocalDateTime.now()) // TODO timezone, ensure UTC everywhere, from code to DB
-                        // TODO add container ARN, too?
-                        .ecsTaskArn("ARN") // TODO retrieve from ECS container metadata
-                        .privateIp("IP"); // TODO retrieve from ECS container metadata
+                        .ecsTaskArn(EcsEnvMetaData.getContainerARN())
+                        .privateIp(EcsEnvMetaData.getNetworks().get(0).getIPv4Addresses().get(0));
         ResponseEntity<ActivityExecutionStatusEnum> proceed;
         ActivityExecutionStatusEnum activityStatus;
 
@@ -80,8 +84,6 @@ public class ActivityDispatchAspect {
             ).build();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(failureRecord);
         }
-
-        // TODO turn OFF scale-in protection. Use AWS SDK as needed.
 
         if (Arrays.asList(REJECTED, FAILED, DONE).contains(activityStatus)) {
             recordBuilder.endTime(LocalDateTime.now());

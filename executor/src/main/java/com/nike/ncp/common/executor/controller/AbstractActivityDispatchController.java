@@ -1,13 +1,16 @@
 package com.nike.ncp.common.executor.controller;
 
 import com.nike.ncp.common.executor.aspect.ActivityDispatchAspect;
+import com.nike.ncp.common.executor.model.ActivityExecutionResult;
 import com.nike.ncp.common.model.journey.AudienceConfig;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum;
 import com.nike.ncp.common.model.proxy.DispatchedActivity;
+import com.sun.management.OperatingSystemMXBean;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +18,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.lang.management.ManagementFactory;
+import java.util.function.Function;
 
 /**
  * Implement this interface to allow seamless API exchanges
@@ -41,11 +47,14 @@ import org.springframework.web.bind.annotation.RestController;
  * }
  * </pre>
  * Learn more about how <a href="https://www.baeldung.com/spring-interface-driven-controllers#2-interface">interface-driven controller</a> works.
- *
  */
 @Slf4j
 @RequestMapping("/v1")
 public abstract class AbstractActivityDispatchController<ACTIVITY_CONFIG> {
+
+    @Value("${ncp.executor.threshold.cpu:60}")
+    private Integer cpuThreshold;
+
     /**
      * Accepts and processes a {@link DispatchedActivity} sent from <a href="https://github.com/nike-gc-ncp/ncp-proxy">One-NCP proxy</a>.
      * <br/>
@@ -65,6 +74,32 @@ public abstract class AbstractActivityDispatchController<ACTIVITY_CONFIG> {
             @PathVariable ObjectId activityId,
             @RequestBody DispatchedActivity<ACTIVITY_CONFIG> activityPayload
     );
+
+    protected <CHECKED_DATA> ActivityExecutionResult<CHECKED_DATA> preCheck(
+            DispatchedActivity<ACTIVITY_CONFIG> activityPayload,
+            Function<DispatchedActivity<ACTIVITY_CONFIG>, ActivityExecutionResult<CHECKED_DATA>> preCheck
+    ) {
+        // check on system level
+        OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        double cpuLoad = osmxb.getSystemCpuLoad();
+        if (cpuLoad * 100 > cpuThreshold) {
+            RuntimeException runtimeException = new RuntimeException("CPU overloaded in threshold " + cpuThreshold + "%. current usage : " + cpuLoad);
+            log("Executor reject activity in throttled", activityPayload, runtimeException);
+            return ActivityExecutionResult.failure(runtimeException, ActivityExecutionStatusEnum.THROTTLED);
+        }
+        // check on business level
+        ActivityExecutionResult<CHECKED_DATA> preCheckResult;
+        try {
+            preCheckResult = preCheck.apply(activityPayload);
+        } catch (Exception e) {
+            log("Executor reject activity", activityPayload, e);
+            return ActivityExecutionResult.failure(e);
+        }
+        if (preCheckResult.getFailure() != null) {
+            log("Executor reject activity", activityPayload, preCheckResult.getFailure());
+        }
+        return preCheckResult;
+    }
 
     protected void log(String title, DispatchedActivity<ACTIVITY_CONFIG> activityPayload) {
         String text = title + " [journeyDefinitionId={}], [journeyInstanceId={}], [activityId={}], [category={}].";

@@ -12,6 +12,7 @@ public class SysAuditLog implements Serializable {
     @Id
     private String id;
 
+    private String resourceId;
     private String resourceType;
 
     private String appName;
@@ -36,6 +37,14 @@ public class SysAuditLog implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
     }
 
     public String getResourceType() {

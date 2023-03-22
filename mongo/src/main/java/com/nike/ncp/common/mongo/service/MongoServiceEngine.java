@@ -177,9 +177,9 @@ public class MongoServiceEngine implements MongoService {
      * @param updateBuilder
      * @param clazz
      */
-    public void updateFirst(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, Class<?> clazz) {
+    public long updateFirst(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, Class<?> clazz) {
         Query query = new Query(criteriaWrapper.build());
-        mongoTemplate.updateFirst(query, updateBuilder.toUpdate(), clazz);
+        return mongoTemplate.updateFirst(query, updateBuilder.toUpdate(), clazz).getModifiedCount();
     }
 
     /**
@@ -189,9 +189,9 @@ public class MongoServiceEngine implements MongoService {
      * @param updateBuilder
      * @param collectionName
      */
-    public void updateFirst(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, String collectionName) {
+    public long updateFirst(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, String collectionName) {
         Query query = new Query(criteriaWrapper.build());
-        mongoTemplate.updateFirst(query, updateBuilder.toUpdate(), collectionName);
+        return mongoTemplate.updateFirst(query, updateBuilder.toUpdate(), collectionName).getModifiedCount();
     }
 
     /**
@@ -201,8 +201,8 @@ public class MongoServiceEngine implements MongoService {
      * @param updateBuilder
      * @param clazz
      */
-    public void updateMulti(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, Class<?> clazz) {
-        mongoTemplate.updateMulti(new Query(criteriaWrapper.build()), updateBuilder.toUpdate(), clazz);
+    public long updateMulti(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, Class<?> clazz) {
+        return mongoTemplate.updateMulti(new Query(criteriaWrapper.build()), updateBuilder.toUpdate(), clazz).getModifiedCount();
     }
 
     /**
@@ -212,8 +212,9 @@ public class MongoServiceEngine implements MongoService {
      * @param updateBuilder
      * @param collectionName
      */
-    public void updateMulti(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, String collectionName) {
-        mongoTemplate.updateMulti(new Query(criteriaWrapper.build()), updateBuilder.toUpdate(), collectionName);
+    public long updateMulti(CriteriaWrapper criteriaWrapper, UpdateBuilder updateBuilder, String collectionName) {
+        return mongoTemplate.updateMulti(new Query(criteriaWrapper.build()), updateBuilder.toUpdate(),
+                collectionName).getModifiedCount();
     }
 
     /**
@@ -222,9 +223,9 @@ public class MongoServiceEngine implements MongoService {
      * @param id
      * @param clazz
      */
-    public void deleteById(String id, Class<?> clazz) {
+    public long deleteById(String id, Class<?> clazz) {
         Assert.hasLength(id, "Id must not be empty.");
-        deleteDocument(new CriteriaAndWrapper().eq(Constant::getId, id), clazz, null);
+        return deleteDocument(new CriteriaAndWrapper().eq(Constant::getId, id), clazz, null);
     }
 
     /**
@@ -233,9 +234,9 @@ public class MongoServiceEngine implements MongoService {
      * @param id
      * @param collectionName
      */
-    public void deleteById(String id, String collectionName) {
+    public long deleteById(String id, String collectionName) {
         Assert.hasLength(id, "Id must not be empty.");
-        deleteDocument(new CriteriaAndWrapper().eq(Constant::getId, id), null, collectionName);
+        return deleteDocument(new CriteriaAndWrapper().eq(Constant::getId, id), null, collectionName);
     }
 
     /**
@@ -244,9 +245,9 @@ public class MongoServiceEngine implements MongoService {
      * @param ids
      * @param clazz
      */
-    public void deleteByIds(List<String> ids, Class<?> clazz) {
+    public long deleteByIds(List<String> ids, Class<?> clazz) {
         Assert.notEmpty(ids, "collection must not be empty");
-        deleteDocument(new CriteriaAndWrapper().in(Constant::getId, ids), clazz, null);
+        return deleteDocument(new CriteriaAndWrapper().in(Constant::getId, ids), clazz, null);
     }
 
     /**
@@ -255,9 +256,9 @@ public class MongoServiceEngine implements MongoService {
      * @param ids
      * @param collectionName
      */
-    public void deleteByIds(List<String> ids, String collectionName) {
+    public long deleteByIds(List<String> ids, String collectionName) {
         Assert.notEmpty(ids, "collection must not be empty");
-        deleteDocument(new CriteriaAndWrapper().in(Constant::getId, ids), null, collectionName);
+        return deleteDocument(new CriteriaAndWrapper().in(Constant::getId, ids), null, collectionName);
     }
 
     /**
@@ -266,8 +267,8 @@ public class MongoServiceEngine implements MongoService {
      * @param criteriaWrapper
      * @param clazz
      */
-    public void deleteByQuery(CriteriaWrapper criteriaWrapper, Class<?> clazz) {
-        deleteDocument(criteriaWrapper, clazz, null);
+    public long deleteByQuery(CriteriaWrapper criteriaWrapper, Class<?> clazz) {
+        return deleteDocument(criteriaWrapper, clazz, null);
     }
 
     /**
@@ -276,16 +277,16 @@ public class MongoServiceEngine implements MongoService {
      * @param criteriaWrapper
      * @param collectionName
      */
-    public void deleteByQuery(CriteriaWrapper criteriaWrapper, String collectionName) {
-        deleteDocument(criteriaWrapper, null, collectionName);
+    public long deleteByQuery(CriteriaWrapper criteriaWrapper, String collectionName) {
+        return deleteDocument(criteriaWrapper, null, collectionName);
     }
 
-    private void deleteDocument(CriteriaWrapper criteriaWrapper, Class<?> clazz, String collectionName) {
+    private long deleteDocument(CriteriaWrapper criteriaWrapper, Class<?> clazz, String collectionName) {
         Query query = new Query(criteriaWrapper.build());
         if (StringUtils.isNotEmpty(collectionName)) {
-            mongoTemplate.remove(query, collectionName);
+            return mongoTemplate.remove(query, collectionName).getDeletedCount();
         } else {
-            mongoTemplate.remove(query, clazz);
+            return mongoTemplate.remove(query, clazz).getDeletedCount();
         }
     }
 

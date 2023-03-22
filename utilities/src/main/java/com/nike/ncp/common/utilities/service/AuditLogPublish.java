@@ -28,8 +28,10 @@ public class AuditLogPublish {
         log.info("event=record_audit_log,Event-based publishing logging succeeded");
     }
 
-    public void publishEvent(ResourceTypeEnum resourceType, String description, OperTypeEnum operType) {
+    public void publishEvent(ResourceTypeEnum resourceType, OperTypeEnum operType, String description,
+                             String resourceId) {
         SysAuditLog sysAuditLog = new SysAuditLog();
+        sysAuditLog.setResourceId(resourceId);
         sysAuditLog.setResourceType(resourceType.value());
         sysAuditLog.setAppName(appName);
         sysAuditLog.setOperType(operType.name());

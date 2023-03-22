@@ -12,8 +12,9 @@ import java.lang.annotation.Target;
 public @interface AuditLog {
 
     ResourceTypeEnum resourceType();
-    String description() default "";
     OperTypeEnum operType();
+    String description() default "";
+    String resourceId() default "";
 
 
 }

@@ -8,13 +8,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.ACCEPTED;
+import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.THROTTLED;
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -29,17 +31,9 @@ public class CustomActivityDispatchController<ACTIVITY_CONFIG, CHECKED_DATA> ext
             @RequestBody DispatchedActivity<ACTIVITY_CONFIG> activityPayload
     ) {
         log("Executor receive activity", activityPayload);
-        // check on business level
-        ActivityExecutionResult<CHECKED_DATA> preCheckResult;
-        try {
-            preCheckResult = activityDispatchService.preCheck(activityPayload);
-        } catch (Exception e) {
-            log("Executor reject activity", activityPayload, e);
-            return new ResponseEntity<>(ActivityExecutionStatusEnum.REJECTED, HttpStatus.OK);
-        }
-        if (preCheckResult.getFailure() != null) {
-            log("Executor reject activity", activityPayload, preCheckResult.getFailure());
-            return new ResponseEntity<>(ActivityExecutionStatusEnum.REJECTED, HttpStatus.OK);
+        ActivityExecutionResult<CHECKED_DATA> preCheckResult = preCheck(activityPayload, activityDispatchService::preCheck);
+        if (preCheckResult.getStatusEnum() != ACCEPTED) {
+            return new ResponseEntity<>(preCheckResult.getStatusEnum(), preCheckResult.getStatusEnum().getHttpStatus());
         }
         // execute task
         try {
@@ -55,9 +49,9 @@ public class CustomActivityDispatchController<ACTIVITY_CONFIG, CHECKED_DATA> ext
             );
         } catch (RejectedExecutionException e) {
             log("Executor reject activity", activityPayload, e);
-            return new ResponseEntity<>(ActivityExecutionStatusEnum.REJECTED, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(THROTTLED, THROTTLED.getHttpStatus());
         }
         log("Executor accept activity", activityPayload);
-        return new ResponseEntity<>(ActivityExecutionStatusEnum.ACCEPTED, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(ACCEPTED, ACCEPTED.getHttpStatus());
     }
 }

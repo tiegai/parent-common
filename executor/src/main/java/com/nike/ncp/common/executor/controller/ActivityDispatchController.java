@@ -18,7 +18,6 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.ACCEPTED;
-import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.REJECTED;
 import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.THROTTLED;
 
 @Slf4j
@@ -35,17 +34,9 @@ public class ActivityDispatchController<ACTIVITY_CONFIG, CHECKED_DATA> extends A
             @RequestBody DispatchedActivity<ACTIVITY_CONFIG> activityPayload
     ) {
         log("Executor receive activity", activityPayload);
-        // check on business level
-        ActivityExecutionResult<CHECKED_DATA> preCheckResult;
-        try {
-            preCheckResult = activityDispatchService.preCheck(activityPayload);
-        } catch (Exception e) {
-            log("Executor reject activity", activityPayload, e);
-            return new ResponseEntity<>(REJECTED, REJECTED.getHttpStatus());
-        }
+        ActivityExecutionResult<CHECKED_DATA> preCheckResult = preCheck(activityPayload, activityDispatchService::preCheck);
         if (preCheckResult.getFailure() != null) {
-            log("Executor reject activity", activityPayload, preCheckResult.getFailure());
-            return new ResponseEntity<>(REJECTED, REJECTED.getHttpStatus());
+            return new ResponseEntity<>(preCheckResult.getStatusEnum(), preCheckResult.getStatusEnum().getHttpStatus());
         }
         // execute task
         try {
@@ -74,7 +65,7 @@ public class ActivityDispatchController<ACTIVITY_CONFIG, CHECKED_DATA> extends A
                     }
             );
         } catch (RejectedExecutionException e) {
-            log("Executor reject activity", activityPayload, e);
+            log("Executor reject activity in throttled", activityPayload, e);
             return new ResponseEntity<>(THROTTLED, THROTTLED.getHttpStatus());
         }
         log("Executor accept activity", activityPayload);

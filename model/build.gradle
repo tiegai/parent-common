@@ -10,6 +10,7 @@ dependencies {
 	
 	implementation("org.mongodb:bson")
 	implementation("com.fasterxml.jackson.core:jackson-databind")
+	implementation("com.google.code.findbugs:annotations:${findbugsVersion}")
 	
 	compileOnly("org.projectlombok:lombok:${lombokVersion}")
 	annotationProcessor("org.projectlombok:lombok:${lombokVersion}")

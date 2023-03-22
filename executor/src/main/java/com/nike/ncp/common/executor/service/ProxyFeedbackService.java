@@ -1,6 +1,7 @@
 package com.nike.ncp.common.executor.service;
 
 import com.nike.ncp.common.executor.properties.CommonExecutorProperties;
+import com.nike.ncp.common.executor.properties.EcsEnvMetaData;
 import com.nike.ncp.common.model.proxy.ActivityExecutionFailureRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord.ActivityExecutionRecordBuilder;
@@ -185,9 +186,8 @@ public class ProxyFeedbackService {
     private static ActivityExecutionRecordBuilder<?, ?> getExecutionRecordBuilder() {
         return ActivityExecutionRecord.builder()
                 .endTime(LocalDateTime.now()) // TODO timezone, ensure UTC everywhere, from code to DB
-                // TODO add container ARN, too?
-                .ecsTaskArn("DUMMY_ARN") // TODO retrieve from ECS container metadata
-                .privateIp("DUMMY_IP") // TODO retrieve from ECS container metadata
+                .ecsTaskArn(EcsEnvMetaData.getContainerARN())
+                .privateIp(EcsEnvMetaData.getNetworks().get(0).getIPv4Addresses().get(0))
                 .status(DONE);
     }
 
@@ -204,10 +204,10 @@ public class ProxyFeedbackService {
                         feedbackRequest.getClass().getName(),
                         s.failure().getMessage(),
                         feedbackRequest)
-                )).onRetryExhaustedThrow(Objects.requireNonNullElse(
-                        biFunctionWithTracing(retryExhaustionHandler),
-                        biFunctionWithTracing(getDefaultRetryExhaustionHandler())
-                ));
+                )).onRetryExhaustedThrow(biFunctionWithTracing(Objects.requireNonNullElse(
+                        retryExhaustionHandler,
+                        getDefaultRetryExhaustionHandler()
+                )));
     }
 
     /**

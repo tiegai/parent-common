@@ -3,9 +3,15 @@ package com.nike.ncp.common.utilities.model;
 public enum OperTypeEnum {
 
     CREATE("CREATE"),
+    EDIT("EDIT"),
     DELETE("DELETE"),
-    UPDATE("UPDATE"),
-    OTHER("OTHER");
+    SUBMIT("SUBMIT"),
+    CANCEL("CANCEL"),
+    APPROVE("APPROVE"),
+    REJECT("REJECT"),
+    RESUME("RESUME"),
+    SUSPEND("SUSPEND"),
+    LOGIN("LOGIN");
 
 
     private String name;

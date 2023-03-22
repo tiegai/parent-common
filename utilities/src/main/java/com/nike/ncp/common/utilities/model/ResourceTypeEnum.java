@@ -4,9 +4,9 @@ public enum ResourceTypeEnum {
 
     JOURNEY("Journey"),
     USER("User"),
-    SMS_TEMPLATE("SMSTemplate"),
-    EMAIL_TEMPLATE("EmailTemplate"),
-    PUSH_TEMPLATE("PushTemplate"),
+    SMS_TEMPLATE("SMS"),
+    EMAIL_TEMPLATE("Email"),
+    PUSH_TEMPLATE("Push"),
     ROLE("Role");
 
 

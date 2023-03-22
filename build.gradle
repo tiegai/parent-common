@@ -130,6 +130,7 @@ ext {
     cerberusArchaiusVersion = '7.1.0'
     backstopperInternalVersion = '5.0.0.35'
     backstopperVersion = '0.12.0'
+    findbugsVersion = '3.0.1'
 
     // test dependency versions
     junitVersion = '4.12'
