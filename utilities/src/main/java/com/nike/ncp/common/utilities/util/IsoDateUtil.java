@@ -4,10 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -34,12 +30,6 @@ public final class IsoDateUtil {
         } catch (ParseException e) {
             throw new RuntimeException("Unable to parse date " + isoDate, e);
         }
-    }
-
-    public static LocalDateTime toUtc(final LocalDateTime time) {
-        final ZonedDateTime zonedTime = time.atZone(ZoneId.systemDefault());
-        final ZonedDateTime converted = zonedTime.withZoneSameInstant(ZoneOffset.UTC);
-        return converted.toLocalDateTime();
     }
 
 }

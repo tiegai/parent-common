@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Document("sys_audit_log")
 public class SysAuditLog implements Serializable {
@@ -29,7 +29,7 @@ public class SysAuditLog implements Serializable {
 
     private String description;
 
-    private LocalDateTime operTime;
+    private Date operTime;
 
     public String getId() {
         return id;
@@ -111,11 +111,11 @@ public class SysAuditLog implements Serializable {
         this.description = description;
     }
 
-    public LocalDateTime getOperTime() {
+    public Date getOperTime() {
         return operTime;
     }
 
-    public void setOperTime(LocalDateTime operTime) {
+    public void setOperTime(Date operTime) {
         this.operTime = operTime;
     }
 }
