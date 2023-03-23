@@ -9,7 +9,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PushConfig {
+public class InboxPushConfig {
+    private String messageType;
+    private String channel;
     private String templateId;
     private String cpCode;
 }

@@ -9,9 +9,9 @@ public enum JourneyActivityEnum {
     CATEGORY_RANDOM_CHOICE(ActivityCategoryEnum.RANDOM_CHOICE.value()),
     CATEGORY_FREQ_CTRL(ActivityCategoryEnum.FREQ_CTRL.value()),
     CATEGORY_SMS(ActivityCategoryEnum.SMS.value()),
-    CATEGORY_PUSH(ActivityCategoryEnum.PUSH.value()),
+    CATEGORY_INBOX_PUSH(ActivityCategoryEnum.INBOX_PUSH.value()),
     CATEGORY_EMAIL(ActivityCategoryEnum.EMAIL.value()),
-    CATEGORY_INBOX(ActivityCategoryEnum.INBOX.value()),
+    CATEGORY_PROMO(ActivityCategoryEnum.PROMO.value()),
     CATEGORY_TAG(ActivityCategoryEnum.TAG.value()),
     CATEGORY_WAIT(ActivityCategoryEnum.WAIT.value());
 

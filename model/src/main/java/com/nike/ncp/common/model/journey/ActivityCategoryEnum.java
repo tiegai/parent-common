@@ -9,9 +9,9 @@ public enum ActivityCategoryEnum {
     RANDOM_CHOICE("RANDOM_CHOICE"),
     FREQ_CTRL("FREQ_CTRL"),
     SMS("SMS"),
-    PUSH("PUSH"),
+    INBOX_PUSH("INBOX_PUSH"),
     EMAIL("EMAIL"),
-    INBOX("INBOX"),
+    PROMO("PROMO"),
     TAG("TAG"),
     WAIT("WAIT");
 

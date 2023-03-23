@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class InboxConfig {
-    private String threadId;
+public class PromoConfig {
+    private String promoCode;
+    private int maximumUses;
 }

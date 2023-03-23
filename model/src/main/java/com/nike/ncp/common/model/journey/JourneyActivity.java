@@ -19,9 +19,9 @@ public class JourneyActivity {
     private TraitChoiceConfig traitChoiceConfig;
     private RandomChoiceConfig randomChoiceConfig;
     private SmsConfig smsConfig;
-    private PushConfig pushConfig;
+    private InboxPushConfig inboxPushConfig;
     private EmailConfig emailConfig;
-    private InboxConfig inboxConfig;
+    private PromoConfig promoConfig;
     private TagConfig tagConfig;
     private WaitConfig waitConfig;
 }
