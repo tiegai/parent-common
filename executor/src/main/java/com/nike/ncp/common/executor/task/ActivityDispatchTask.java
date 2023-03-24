@@ -1,7 +1,7 @@
 package com.nike.ncp.common.executor.task;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nike.ncp.common.executor.properties.EcsEnvMetaData;
+import com.nike.ncp.common.executor.properties.EcsMetadata;
 import com.nike.ncp.common.model.journey.ActivityCategoryEnum;
 import com.nike.ncp.common.model.proxy.ActivityExecutionFailureRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum;
@@ -114,8 +114,8 @@ public abstract class ActivityDispatchTask<T> {
                 dispatchedActivity.getActivity(), new DispatchedActivity.Activity<>()
         ).getCategory();
         var executionRecord = ActivityExecutionFailureRecord.builder()
-                .ecsTaskArn(EcsEnvMetaData.getContainerARN())
-                .privateIp(EcsEnvMetaData.getNetworks().get(0).getIPv4Addresses().get(0))
+                .ecsTaskArn(EcsMetadata.getLabels().get("com.amazonaws.ecs.task-arn"))
+                .privateIp(EcsMetadata.getNetworks().get(0).getIPv4Addresses().get(0))
                 .status(ActivityExecutionStatusEnum.FAILED)
                 .failure(ActivityExecutionFailureRecord.Failure.builder().message(exception.getMessage()).build())
                 .endTime(LocalDateTime.now())

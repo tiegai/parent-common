@@ -22,7 +22,7 @@ import static com.nike.ncp.common.model.proxy.ActivityExecutionStatusEnum.THROTT
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class ActivityDispatchController<ACTIVITY_CONFIG, CHECKED_DATA> extends AbstractActivityDispatchController<ACTIVITY_CONFIG> {
+public class CommonActivityDispatchController<ACTIVITY_CONFIG, CHECKED_DATA> extends AbstractActivityDispatchController<ACTIVITY_CONFIG> {
 
     private final transient ThreadPoolExecutor threadPoolExecutor;
     private final transient CommonActivityDispatchService<CHECKED_DATA> activityDispatchService;

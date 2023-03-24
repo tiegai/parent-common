@@ -2,7 +2,7 @@ package com.nike.ncp.common.executor.service;
 
 import com.nike.internal.util.StringUtils;
 import com.nike.ncp.common.executor.properties.CommonExecutorProperties;
-import com.nike.ncp.common.executor.properties.EcsEnvMetaData;
+import com.nike.ncp.common.executor.properties.EcsMetadata;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -39,15 +39,16 @@ public class EcsScaleInProtectionService implements SchedulingConfigurer {
             throw new UnsupportedOperationException("Cluster name is required");
         }
         EcsClient ecs = EcsClient.builder().endpointProvider(EcsEndpointProvider.defaultProvider()).build();
+        String taskArnId = EcsMetadata.getDockerId().split("-")[0];
         boolean hasProtected = ecs.updateTaskProtection(builder -> builder
                 .cluster(ecsClusterName)
                 .protectionEnabled(protectionEnabled)
-                .tasks(EcsEnvMetaData.getContainerARN())
+                .tasks(taskArnId)
         ).hasProtectedTasks();
         if (!hasProtected) {
             throw new IllegalStateException(
                     String.format("%s scale-in protection as failure ECS services: ecsClusterName=%s, taskArn=%s",
-                            runType, ecsClusterName, EcsEnvMetaData.getContainerARN()));
+                            runType, ecsClusterName, taskArnId));
         }
         log.info("{} scale-in protection as success", runType);
     }

@@ -1,6 +1,6 @@
 package com.nike.ncp.common.executor.aspect;
 
-import com.nike.ncp.common.executor.properties.EcsEnvMetaData;
+import com.nike.ncp.common.executor.properties.EcsMetadata;
 import com.nike.ncp.common.executor.service.EcsScaleInProtectionService;
 import com.nike.ncp.common.model.proxy.ActivityExecutionFailureRecord;
 import com.nike.ncp.common.model.proxy.ActivityExecutionRecord;
@@ -57,8 +57,8 @@ public class ActivityDispatchAspect {
         final ActivityExecutionRecord.ActivityExecutionRecordBuilder<?, ?> recordBuilder =
                 ActivityExecutionRecord.builder()
                         .beginTime(LocalDateTime.now()) // TODO timezone, ensure UTC everywhere, from code to DB
-                        .ecsTaskArn(EcsEnvMetaData.getContainerARN())
-                        .privateIp(EcsEnvMetaData.getNetworks().get(0).getIPv4Addresses().get(0));
+                        .ecsTaskArn(EcsMetadata.getLabels().get("com.amazonaws.ecs.task-arn"))
+                        .privateIp(EcsMetadata.getNetworks().get(0).getIPv4Addresses().get(0));
         ResponseEntity<ActivityExecutionStatusEnum> proceed;
         ActivityExecutionStatusEnum activityStatus;
 

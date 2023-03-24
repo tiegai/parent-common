@@ -1,6 +1,6 @@
 package com.nike.ncp.common.executor.configuration;
 
-import com.nike.ncp.common.executor.controller.ActivityDispatchController;
+import com.nike.ncp.common.executor.controller.CommonActivityDispatchController;
 import com.nike.ncp.common.executor.controller.CustomActivityDispatchController;
 import com.nike.ncp.common.executor.service.CommonActivityDispatchService;
 import com.nike.ncp.common.executor.service.CustomActivityDispatchService;
@@ -19,15 +19,15 @@ public class ActivityDispatchControllerConfiguration<CHECKED_DATA> {
     private transient CommonActivityDispatchService<CHECKED_DATA> activityDispatchService;
     @Autowired(required = false)
     private transient CustomActivityDispatchService<CHECKED_DATA> customActivityDispatchService;
-    @Autowired
+    @Resource
     private transient ThreadPoolExecutor threadPoolExecutor;
     @Resource
     private transient ProxyFeedbackService proxyFeedbackService;
 
     @Bean
     @ConditionalOnBean(CommonActivityDispatchService.class)
-    public <ACTIVITY_CONFIG> ActivityDispatchController<ACTIVITY_CONFIG, CHECKED_DATA> activityDispatchController() {
-        return new ActivityDispatchController<>(threadPoolExecutor, activityDispatchService, proxyFeedbackService);
+    public <ACTIVITY_CONFIG> CommonActivityDispatchController<ACTIVITY_CONFIG, CHECKED_DATA> activityDispatchController() {
+        return new CommonActivityDispatchController<>(threadPoolExecutor, activityDispatchService, proxyFeedbackService);
     }
 
     @Bean

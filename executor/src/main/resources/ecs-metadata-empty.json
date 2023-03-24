@@ -1,0 +1,50 @@
+{
+  "DockerId": "0-0",
+  "Name": "mock",
+  "DockerName": "mock",
+  "Image": "",
+  "ImageID": "",
+  "Labels": {
+    "com.amazonaws.ecs.cluster": "",
+    "com.amazonaws.ecs.container-name": "mock",
+    "com.amazonaws.ecs.task-arn": "",
+    "com.amazonaws.ecs.task-definition-family": "",
+    "com.amazonaws.ecs.task-definition-version": ""
+  },
+  "DesiredStatus": "RUNNING",
+  "KnownStatus": "RUNNING",
+  "Limits": {
+    "CPU": 10,
+    "Memory": 128
+  },
+  "CreatedAt": "2000-01-01T00:00:00.00000000Z",
+  "StartedAt": "2000-01-01T00:00:00.00000000Z",
+  "Type": "NORMAL",
+  "Networks": [
+    {
+      "NetworkMode": "",
+      "IPv4Addresses": [
+        "0.0.0.0"
+      ],
+      "AttachmentIndex": 0,
+      "MACAddress": "00:00:00:00:00:00",
+      "IPv4SubnetCIDRBlock": "0.0.0.0/0",
+      "DomainNameServers": [
+        "0.0.0.0"
+      ],
+      "DomainNameSearchList": [
+        ""
+      ],
+      "PrivateDNSName": "",
+      "SubnetGatewayIpv4Address": "0.0.0.0/0"
+    }
+  ],
+  "ContainerARN": "",
+  "LogOptions": {
+    "awslogs-create-group": "true",
+    "awslogs-group": "",
+    "awslogs-region": "",
+    "awslogs-stream": ""
+  },
+  "LogDriver": ""
+}

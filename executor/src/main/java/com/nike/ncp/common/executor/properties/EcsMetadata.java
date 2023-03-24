@@ -1,20 +1,30 @@
 package com.nike.ncp.common.executor.properties;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * EcsMetadata is for metadata of ecs container and task.
+ * The empty metadata will be available in local.
+ * Refer to <a href="https://docs.aws.amazon.com/AmazonECS/latest/userguide/task-metadata-endpoint-v4-fargate.html" />
+ */
 @Setter
-public final class EcsEnvMetaData {
-    private static EcsEnvMetaData instance;
+public final class EcsMetadata {
+    private static EcsMetadata instance;
 
-    static void setInstance(EcsEnvMetaData metaData) {
+    static void setInstance(EcsMetadata metaData) {
         instance = metaData;
     }
 
@@ -137,15 +147,27 @@ public final class EcsEnvMetaData {
         private String subnetGatewayIpv4Address;
     }
 
-    private EcsEnvMetaData() {
+    private EcsMetadata() {
     }
 }
 
+@Slf4j
 @Component
-class EcsEnvMetaDataService {
+class EcsMetadataService {
     @PostConstruct
-    public void metadata() {
+    public void init() {
         String url = System.getenv("ECS_CONTAINER_METADATA_URI_V4");
-        EcsEnvMetaData.setInstance(new RestTemplate().getForEntity(url, EcsEnvMetaData.class).getBody());
+        if (url == null) {
+            log.info("ECS_CONTAINER_METADATA_URI_V4 not found.");
+            Resource resource = new ClassPathResource("ecs-metadata-empty.json");
+            try {
+                EcsMetadata ecsMetadata = new ObjectMapper().readValue(resource.getInputStream(), EcsMetadata.class);
+                EcsMetadata.setInstance(ecsMetadata);
+            } catch (IOException e) {
+                log.error("EcsEnvMetadata init error : " + e.getMessage(), e);
+            }
+        } else {
+            EcsMetadata.setInstance(new RestTemplate().getForEntity(url, EcsMetadata.class).getBody());
+        }
     }
 }
