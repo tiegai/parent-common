@@ -2,13 +2,16 @@ package com.nike.ncp.common.executor.configuration;
 
 import com.nike.wingtips.spring.webflux.client.WingtipsSpringWebfluxExchangeFilterFunction;
 import com.nike.wingtips.spring.webflux.server.WingtipsSpringWebfluxWebFilter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.WebFilter;
 
 @Configuration
 public class WebFluxConfiguration {
     @Bean
+    @ConditionalOnMissingBean(name = "wingtipsSpringWebfluxWebFilter", value = WebFilter.class)
     public WingtipsSpringWebfluxWebFilter wingtipsSpringWebfluxWebFilter() {
         return WingtipsSpringWebfluxWebFilter
                 .newBuilder()
