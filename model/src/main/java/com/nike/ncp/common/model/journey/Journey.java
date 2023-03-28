@@ -49,6 +49,7 @@ public class Journey {
     private SendChannel sendChannel;
     private String campaign;
     private boolean freqControl;
+    private boolean bypassConsent;
     private List<String> tags;
     private List<JourneyActivity> journeyActivities;
 }
